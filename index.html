@@ -1,86 +1,189 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>정촌 올리움 세대민원 처리 보고서</title>
+  <title>정촌 올리움 세대민원 처리보고서</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+
     body {
-      font-family: 'Arial', sans-serif;
-      margin: 20px;
-      background-color: #f5f5f5;
-    }
-    h1 {
-      text-align: center;
-    }
-    form {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: white;
+      margin: 0;
+      padding: 40px;
+      width: 210mm;
+      min-height: 297mm;
       box-sizing: border-box;
     }
-    canvas {
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 30px;
     }
-    .button-row {
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    textarea {
+      height: 80px;
+      resize: vertical;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .row {
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 20px;
+    }
+
+    .row > div {
+      flex: 1;
+    }
+
+    #photo-preview {
+      display: flex;
+      gap: 20px;
+    }
+
+    #photo-preview img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    #save-btn {
+      background-color: white;
+      color: black;
+      padding: 5px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto;
+    }
+
+    #signature-pad {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    button[type="button"] {
+      margin-bottom: 20px;
     }
   </style>
 </head>
+
 <body>
+  <h1>정촌 올리움 세대민원 처리보고서</h1>
 
-  <h1>세대민원 처리 보고서</h1>
+  <div class="form-group">
+    <label for="date">접수날짜</label>
+    <input type="date" id="date">
+  </div>
 
-  <form onsubmit="handleSubmit(event)">
-    <label for="date">날짜</label>
-    <input type="date" id="date" name="date" required>
+  <div class="form-group">
+    <label for="address">동 / 호수</label>
+    <input type="text" id="address" placeholder="예: 101동 202호">
+  </div>
 
-    <label for="address">세대 주소</label>
-    <input type="text" id="address" name="address" placeholder="예: 101동 1203호" required>
+  <div class="form-group">
+    <label for="content">민원내용</label>
+    <textarea id="content"></textarea>
+  </div>
 
-    <label for="content">민원 내용</label>
-    <textarea id="content" name="content" rows="4" required></textarea>
+  <div class="form-group">
+    <label for="result">처리결과</label>
+    <textarea id="result"></textarea>
+  </div>
 
-    <label for="result">처리 결과</label>
-    <textarea id="result" name="result" rows="4" required></textarea>
+  <div class="form-group">
+    <label for="satisfaction">만족도 평가</label>
+    <select id="satisfaction">
+      <option value="1">★☆☆☆☆ (1)</option>
+      <option value="2">★★☆☆☆ (2)</option>
+      <option value="3">★★★☆☆ (3)</option>
+      <option value="4">★★★★☆ (4)</option>
+      <option value="5">★★★★★ (5)</option>
+    </select>
+  </div>
 
-    <label for="staff">담당자 이름</label>
-    <input type="text" id="staff" name="staff" required>
-
-    <label>서명</label>
-    <canvas id="signature-pad" width="500" height="200"></canvas>
-    <input type="hidden" id="signature-data" name="signature">
-
-    <div class="button-row">
-      <button type="button" onclick="clearSignature()">서명 지우기</button>
-      <button type="submit">제출</button>
+  <div class="form-group">
+    <label>작업 전 / 작업 후 사진</label>
+    <div class="row">
+      <div>
+        <input type="file" id="before-photo" accept="image/*" onchange="previewImage(event, 'before')">
+        <div id="before-preview"></div>
+      </div>
+      <div>
+        <input type="file" id="after-photo" accept="image/*" onchange="previewImage(event, 'after')">
+        <div id="after-preview"></div>
+      </div>
     </div>
-  </form>
+  </div>
 
-  <!-- Signature Pad 라이브러리 -->
+  <div class="form-group">
+    <label for="signature">서명</label>
+    <canvas id="signature-pad" width="300" height="150"></canvas>
+    <button type="button" onclick="clearSignature()">서명 지우기</button>
+    <input type="hidden" id="signature-data">
+  </div>
+
+  <button id="save-btn" onclick="saveAsImage()">Save</button>
+
+  <!-- 라이브러리들 -->
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
   <script>
+    // 이미지 미리보기
+    function previewImage(event, type) {
+      const previewId = type === 'before' ? 'before-preview' : 'after-preview';
+      const preview = document.getElementById(previewId);
+      preview.innerHTML = '';
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.maxWidth = '100%';
+          preview.appendChild(img);
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // 서명 기능 초기화
     const canvas = document.getElementById('signature-pad');
     const signaturePad = new SignaturePad(canvas);
 
@@ -88,28 +191,21 @@
       signaturePad.clear();
     }
 
-    function handleSubmit(event) {
-      event.preventDefault(); // 실제 제출 막고 테스트
-
-      if (signaturePad.isEmpty()) {
-        alert("서명을 작성해주세요.");
-        return;
-      }
+    function saveAsImage() {
+      const btn = document.getElementById('save-btn');
+      btn.classList.add('hidden');
 
       const signatureData = signaturePad.toDataURL();
-      document.getElementById("signature-data").value = signatureData;
+      document.getElementById('signature-data').value = signatureData;
 
-      // 여기서 데이터를 백엔드나 PDF로 저장하거나 콘솔 확인 가능
-      console.log("날짜:", document.getElementById("date").value);
-      console.log("주소:", document.getElementById("address").value);
-      console.log("민원 내용:", document.getElementById("content").value);
-      console.log("처리 결과:", document.getElementById("result").value);
-      console.log("담당자:", document.getElementById("staff").value);
-      console.log("서명 이미지(base64):", signatureData);
-
-      alert("폼이 정상적으로 저장되었습니다! (콘솔에서 데이터 확인 가능)");
+      html2canvas(document.body, { backgroundColor: '#ffffff' }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = '민원처리보고서.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.classList.remove('hidden');
+      });
     }
   </script>
-
 </body>
 </html>
