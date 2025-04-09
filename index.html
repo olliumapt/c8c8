@@ -8,11 +8,18 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 40px 0;
+    }
+
+    #captureArea {
+      background: #fff;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 20px;
-      background: #fff;
+      border: 1px solid #ddd;
       box-sizing: border-box;
     }
 
@@ -45,12 +52,6 @@
       height: 80px;
     }
 
-    #uploadedImageBefore,
-    #uploadedImageAfter {
-      margin-top: 10px;
-      max-width: 300px;
-    }
-
     .image-upload-section {
       display: flex;
       justify-content: center;
@@ -63,13 +64,25 @@
       text-align: center;
     }
 
-    .image-upload label {
-      cursor: pointer;
+    .image-upload img {
+      margin-top: 10px;
+      max-width: 300px;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-upload {
       display: inline-block;
       padding: 8px 14px;
-      background-color: #f0f0f0;
+      background-color: #e0e0e0;
       border-radius: 4px;
-      margin-bottom: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 6px;
     }
 
     .signature-container {
@@ -96,15 +109,12 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      background-color: #4285f4;
+      color: white;
     }
 
     button:hover {
-      opacity: 0.85;
-    }
-
-    #captureArea {
-      padding: 20px;
-      border: 1px solid #ddd;
+      opacity: 0.9;
     }
 
     .star {
@@ -140,13 +150,19 @@
       <div class="image-upload-section">
         <div class="image-upload">
           <label for="before">작업 전</label>
-          <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
+          <label class="custom-file-upload">
+            <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
+            사진 업로드
+          </label>
           <img id="uploadedImageBefore" src="" alt="작업 전">
         </div>
 
         <div class="image-upload">
           <label for="after">작업 후</label>
-          <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
+          <label class="custom-file-upload">
+            <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
+            사진 업로드
+          </label>
           <img id="uploadedImageAfter" src="" alt="작업 후">
         </div>
       </div>
