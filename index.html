@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>세대 민원 처리 보고서</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
@@ -56,9 +55,10 @@
     }
 
     .images img {
-      max-width: 45%;
+      max-width: 100%;
       height: auto;
       border: 1px solid #ccc;
+      margin-top: 5px;
     }
 
     .signature {
@@ -88,8 +88,11 @@
       cursor: pointer;
     }
 
-    .custom-file-label {
-      display: inline-block;
+    .hidden-input {
+      display: none;
+    }
+
+    .file-button {
       padding: 6px 12px;
       background-color: #f0f0f0;
       border: 1px solid #ccc;
@@ -111,11 +114,11 @@
     <div class="row">
       <div class="column">
         <label for="date">날짜</label>
-        <input type="date" id="date" name="date">
+        <input type="date" id="date" name="date" />
       </div>
       <div class="column">
         <label for="address">세대 주소</label>
-        <input type="text" id="address" name="address">
+        <input type="text" id="address" name="address" />
       </div>
     </div>
 
@@ -153,27 +156,28 @@
 
     <div class="images">
       <div class="column">
-        <label for="before" class="custom-file-label">작업 전 사진</label>
-        <input type="file" id="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
-        <img id="uploadedImageBefore" src="" alt="작업 전 이미지">
+        <label class="file-button" onclick="document.getElementById('beforeInput').click()">작업 전 사진 선택</label>
+        <input type="file" id="beforeInput" class="hidden-input" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')" />
+        <img id="uploadedImageBefore" src="" alt="작업 전 이미지" />
       </div>
       <div class="column">
-        <label for="after" class="custom-file-label">작업 후 사진</label>
-        <input type="file" id="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
-        <img id="uploadedImageAfter" src="" alt="작업 후 이미지">
+        <label class="file-button" onclick="document.getElementById('afterInput').click()">작업 후 사진 선택</label>
+        <input type="file" id="afterInput" class="hidden-input" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')" />
+        <img id="uploadedImageAfter" src="" alt="작업 후 이미지" />
       </div>
     </div>
 
     <div class="signature">
-  <label>입주자 서명</label>
-  <canvas id="signature-pad" width="300" height="150"></canvas>
-  <button type="button" onclick="clearSignature()">서명 지우기</button>
-</div>
+      <label>입주자 서명</label>
+      <canvas id="signature-pad" width="300" height="150"></canvas>
+      <br />
+      <button type="button" onclick="clearSignature()">서명 지우기</button>
+    </div>
 
-
-  <div class="buttons">
-    <button onclick="clearSignature()">리셋</button>
-    <button onclick="saveReport()">저장</button>
+    <div class="buttons">
+      <button onclick="clearSignature()">리셋</button>
+      <button onclick="saveReport()">저장</button>
+    </div>
   </div>
 
   <script>
@@ -186,56 +190,56 @@
       reader.readAsDataURL(event.target.files[0]);
     }
 
-   const canvas = document.getElementById('signature-pad');
-const ctx = canvas.getContext('2d');
-let drawing = false;
-let lastX = 0;
-let lastY = 0;
+    // 서명 패드 동작
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+    let lastX = 0;
+    let lastY = 0;
 
-function startDrawing(x, y) {
-  drawing = true;
-  [lastX, lastY] = [x, y];
-}
+    function startDrawing(x, y) {
+      drawing = true;
+      [lastX, lastY] = [x, y];
+    }
 
-function draw(x, y) {
-  if (!drawing) return;
-  ctx.beginPath();
-  ctx.moveTo(lastX, lastY);
-  ctx.lineTo(x, y);
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.stroke();
-  [lastX, lastY] = [x, y];
-}
+    function draw(x, y) {
+      if (!drawing) return;
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      [lastX, lastY] = [x, y];
+    }
 
-function stopDrawing() {
-  drawing = false;
-}
+    function stopDrawing() {
+      drawing = false;
+    }
 
-canvas.addEventListener('mousedown', e => startDrawing(e.offsetX, e.offsetY));
-canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
-canvas.addEventListener('mouseup', stopDrawing);
-canvas.addEventListener('mouseout', stopDrawing);
+    canvas.addEventListener('mousedown', e => startDrawing(e.offsetX, e.offsetY));
+    canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
 
-// 모바일 터치 대응
-canvas.addEventListener('touchstart', e => {
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
-});
-canvas.addEventListener('touchmove', e => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const touch = e.touches[0];
-  draw(touch.clientX - rect.left, touch.clientY - rect.top);
-});
-canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchstart', e => {
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
 
-function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      draw(touch.clientX - rect.left, touch.clientY - rect.top);
+    }, { passive: false });
 
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function clearSignature() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function saveReport() {
