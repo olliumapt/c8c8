@@ -2,173 +2,214 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>세대 민원 처리 보고서</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>세대민원 처리 보고서</title>
   <style>
     body {
-      font-family: "Arial", sans-serif;
+      font-family: 'Arial', sans-serif;
       max-width: 800px;
-      margin: 0 auto;
+      margin: auto;
       padding: 20px;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 12px;
+      gap: 10px;
     }
 
-    .column {
+    .form-group {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0 10px;
     }
 
     label {
       font-weight: bold;
-      margin-bottom: 4px;
-      text-align: center;
+      margin-bottom: 5px;
     }
 
     input,
+    select,
     textarea {
       width: 100%;
-      padding: 6px;
-      margin-bottom: 8px;
+      padding: 8px;
       box-sizing: border-box;
+      text-align: center;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 100px;
     }
 
     .star-rating {
       display: flex;
+      flex-direction: row;
       justify-content: center;
-      gap: 4px;
-      margin-bottom: 16px;
-    }
-
-    .star {
-      font-size: 28px;
-      color: gold;
+      font-size: 24px;
       cursor: pointer;
+      color: #ccc;
     }
 
-    .images {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-    }
-
-    .images img {
-      max-width: 45%;
-      height: auto;
-      border: 1px solid #ccc;
+    .star-rating .filled {
+      color: gold;
     }
 
     .signature {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 20px;
     }
 
-    .signature-pad {
-      border: 1px solid #000;
-      width: 300px;
-      height: 150px;
-      margin: 10px auto;
-    }
-
-    /* 파일 선택 버튼 커스터마이징 */
-    input[type="file"] {
-      display: none;
-    }
-
-    .custom-file-label {
-      display: inline-block;
-      padding: 6px 12px;
-      background-color: #f0f0f0;
+    #signature-pad {
       border: 1px solid #ccc;
-      border-radius: 4px;
+      width: 100%;
+      height: 200px;
+      margin: auto;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
       cursor: pointer;
-      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 
 <body>
-  <h1>세대 민원 처리 보고서</h1>
-
-  <div class="row">
-    <div class="column">
-      <label for="date">날짜</label>
-      <input type="date" id="date" name="date">
-    </div>
-    <div class="column">
-      <label for="address">세대 주소</label>
-      <input type="text" id="address" name="address">
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="column">
-      <label for="content">민원 내용</label>
-      <textarea id="content" name="content" rows="5"></textarea>
-    </div>
-    <div class="column">
-      <label for="result">처리 결과</label>
-      <textarea id="result" name="result" rows="5"></textarea>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="column">
-      <label for="manager">담당자 이름</label>
-      <input type="text" id="manager" name="manager">
-    </div>
-    <div class="column">
-      <label>만족도 평가</label>
-      <div class="star-rating">
-        <span class="star">★</span>
-        <span class="star">★</span>
-        <span class="star">★</span>
-        <span class="star">★</span>
-        <span class="star">★</span>
+  <h1>정촌 올리움 세대민원 처리 보고서</h1>
+  <form id="report-form">
+    <div class="row">
+      <div class="form-group">
+        <label for="date">날짜</label>
+        <input type="date" id="date" name="date" required />
+      </div>
+      <div class="form-group">
+        <label for="address">세대 주소</label>
+        <input type="text" id="address" name="address" required />
       </div>
     </div>
-  </div>
 
-  <div class="images">
-    <div class="column">
-      <label for="before" class="custom-file-label">작업 전 사진</label>
-      <input type="file" id="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
-      <img id="uploadedImageBefore" src="" alt="작업 전 이미지">
+    <div class="row">
+      <div class="form-group">
+        <label for="complaint">민원 내용</label>
+        <textarea id="complaint" name="complaint" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="result">처리 결과</label>
+        <textarea id="result" name="result" required></textarea>
+      </div>
     </div>
-    <div class="column">
-      <label for="after" class="custom-file-label">작업 후 사진</label>
-      <input type="file" id="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
-      <img id="uploadedImageAfter" src="" alt="작업 후 이미지">
-    </div>
-  </div>
 
-  <div class="signature">
-    <label>입주자 서명</label>
-    <div class="signature-pad"></div>
-  </div>
+    <div class="row">
+      <div class="form-group">
+        <label for="manager">담당자 이름</label>
+        <select id="manager" name="manager" required>
+          <option value="">선택</option>
+          <option value="김원식">김원식</option>
+          <option value="최재혁">최재혁</option>
+          <option value="박상우">박상우</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="rating">만족도 평가</label>
+        <select id="rating" name="rating" required>
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="5">⭐⭐⭐⭐⭐</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="photo">사진 첨부</label>
+      <input type="file" id="photo" name="photo" accept="image/*" />
+    </div>
+
+    <div class="signature">
+      <label for="signature-pad">입주자 서명</label>
+      <canvas id="signature-pad"></canvas>
+    </div>
+
+    <div class="button-group">
+      <button type="reset">리셋</button>
+      <button type="submit">저장</button>
+    </div>
+  </form>
 
   <script>
-    function loadImage(event, imageId) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        const img = document.getElementById(imageId);
-        img.src = reader.result;
-      };
-      reader.readAsDataURL(event.target.files[0]);
-    }
+    // 별점 표시 색상 적용
+    const ratingSelect = document.getElementById('rating');
+    ratingSelect.addEventListener('change', () => {
+      let stars = '';
+      for (let i = 0; i < ratingSelect.value; i++) {
+        stars += '⭐';
+      }
+      ratingSelect.options[ratingSelect.selectedIndex].text = stars;
+    });
+
+    // 서명 패드
+    const canvas = document.getElementById("signature-pad");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+
+    canvas.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(
+        e.touches[0].clientX - canvas.getBoundingClientRect().left,
+        e.touches[0].clientY - canvas.getBoundingClientRect().top
+      );
+    });
+
+    canvas.addEventListener("touchmove", (e) => {
+      if (!drawing) return;
+      e.preventDefault();
+      ctx.lineTo(
+        e.touches[0].clientX - canvas.getBoundingClientRect().left,
+        e.touches[0].clientY - canvas.getBoundingClientRect().top
+      );
+      ctx.stroke();
+    });
+
+    canvas.addEventListener("touchend", () => {
+      drawing = false;
+    });
+
+    // 저장 이벤트
+    document.getElementById("report-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("보고서가 저장되었습니다.");
+    });
   </script>
 </body>
 
