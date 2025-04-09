@@ -1,216 +1,275 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>세대민원 처리 보고서</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>세대 민원 처리 보고서</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: "Arial", sans-serif;
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto;
       padding: 20px;
     }
 
     h1 {
       text-align: center;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      margin-bottom: 20px;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      margin-bottom: 12px;
     }
 
-    .form-group {
+    .column {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 0 10px;
     }
 
     label {
       font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
+      margin-bottom: 4px;
       text-align: center;
     }
 
-    textarea {
-      resize: vertical;
-      height: 100px;
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+
+    .images {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+    }
+
+    .images img {
+      max-width: 100%;
+      max-height: 200px;
+      border: 1px solid #ccc;
+      margin-top: 8px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-label {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
 
     .star-rating {
+      text-align: center;
+      font-size: 28px;
       display: flex;
-      flex-direction: row;
       justify-content: center;
-      font-size: 24px;
-      cursor: pointer;
-      color: #ccc;
+      gap: 5px;
     }
 
-    .star-rating .filled {
+    .star {
+      cursor: pointer;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+
+    .star.selected,
+    .star:hover,
+    .star:hover ~ .star {
       color: gold;
     }
 
     .signature {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
-    #signature-pad {
-      border: 1px solid #ccc;
-      width: 100%;
-      height: 200px;
-      margin: auto;
+    canvas {
+      border: 1px solid #000;
+      touch-action: none;
     }
 
     .button-group {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       margin-top: 20px;
     }
 
     button {
+      background-color: white;
+      color: black;
+      border: 1px solid black;
       padding: 10px 20px;
       font-size: 16px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
       cursor: pointer;
-      border-radius: 5px;
-    }
-
-    button:hover {
-      background-color: #45a049;
+      border-radius: 6px;
     }
   </style>
 </head>
-
 <body>
-  <h1>정촌 올리움 세대민원 처리 보고서</h1>
-  <form id="report-form">
-    <div class="row">
-      <div class="form-group">
-        <label for="date">날짜</label>
-        <input type="date" id="date" name="date" required />
-      </div>
-      <div class="form-group">
-        <label for="address">세대 주소</label>
-        <input type="text" id="address" name="address" required />
-      </div>
-    </div>
+  <h1>세대 민원 처리 보고서</h1>
 
-    <div class="row">
-      <div class="form-group">
-        <label for="complaint">민원 내용</label>
-        <textarea id="complaint" name="complaint" required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="result">처리 결과</label>
-        <textarea id="result" name="result" required></textarea>
-      </div>
+  <div class="row">
+    <div class="column">
+      <label for="date">날짜</label>
+      <input type="date" id="date" name="date" />
     </div>
+    <div class="column">
+      <label for="address">세대 주소</label>
+      <input type="text" id="address" name="address" />
+    </div>
+  </div>
 
-    <div class="row">
-      <div class="form-group">
-        <label for="manager">담당자 이름</label>
-        <select id="manager" name="manager" required>
-          <option value="">선택</option>
-          <option value="김원식">김원식</option>
-          <option value="최재혁">최재혁</option>
-          <option value="박상우">박상우</option>
-        </select>
+  <div class="row">
+    <div class="column">
+      <label for="content">민원 내용</label>
+      <textarea id="content" name="content" rows="5"></textarea>
+    </div>
+    <div class="column">
+      <label for="result">처리 결과</label>
+      <textarea id="result" name="result" rows="5"></textarea>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label for="manager">담당자 이름</label>
+      <select id="manager" name="manager">
+        <option value="">선택하세요</option>
+        <option value="김원식">김원식</option>
+        <option value="최재혁">최재혁</option>
+        <option value="박상우">박상우</option>
+      </select>
+    </div>
+    <div class="column">
+      <label for="rating">만족도 평가</label>
+      <div id="star-rating" class="star-rating">
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
       </div>
-      <div class="form-group">
-        <label for="rating">만족도 평가</label>
-        <select id="rating" name="rating" required>
-          <option value="1">⭐</option>
-          <option value="2">⭐⭐</option>
-          <option value="3">⭐⭐⭐</option>
-          <option value="4">⭐⭐⭐⭐</option>
-          <option value="5">⭐⭐⭐⭐⭐</option>
-        </select>
-      </div>
+      <input type="hidden" id="rating" name="rating" />
     </div>
+  </div>
 
-    <div class="form-group">
-      <label for="photo">사진 첨부</label>
-      <input type="file" id="photo" name="photo" accept="image/*" />
+  <div class="images">
+    <div class="column">
+      <label for="before" class="custom-file-label">작업 전 사진</label>
+      <input type="file" id="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')" />
+      <img id="uploadedImageBefore" src="" alt="작업 전 이미지" />
     </div>
+    <div class="column">
+      <label for="after" class="custom-file-label">작업 후 사진</label>
+      <input type="file" id="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')" />
+      <img id="uploadedImageAfter" src="" alt="작업 후 이미지" />
+    </div>
+  </div>
 
-    <div class="signature">
-      <label for="signature-pad">입주자 서명</label>
-      <canvas id="signature-pad"></canvas>
-    </div>
+  <div class="signature">
+    <label>입주자 서명</label><br/>
+    <canvas id="signature-pad" width="300" height="150"></canvas>
+  </div>
 
-    <div class="button-group">
-      <button type="reset">리셋</button>
-      <button type="submit">저장</button>
-    </div>
-  </form>
+  <div class="button-group">
+    <button type="reset" onclick="resetForm()">리셋</button>
+    <button type="submit">저장</button>
+  </div>
 
   <script>
-    // 별점 표시 색상 적용
-    const ratingSelect = document.getElementById('rating');
-    ratingSelect.addEventListener('change', () => {
-      let stars = '';
-      for (let i = 0; i < ratingSelect.value; i++) {
-        stars += '⭐';
-      }
-      ratingSelect.options[ratingSelect.selectedIndex].text = stars;
+    function loadImage(event, imageId) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = document.getElementById(imageId);
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // 별점 평가 기능
+    const stars = document.querySelectorAll('.star-rating .star');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach((star, index) => {
+      star.addEventListener('click', () => {
+        const value = star.getAttribute('data-value');
+        ratingInput.value = value;
+        stars.forEach((s, i) => {
+          s.classList.toggle('selected', i < value);
+        });
+      });
     });
 
     // 서명 패드
-    const canvas = document.getElementById("signature-pad");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    canvas.addEventListener("touchstart", (e) => {
-      e.preventDefault();
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', endDrawing);
+    canvas.addEventListener('mouseout', endDrawing);
+
+    canvas.addEventListener('touchstart', startDrawingTouch, { passive: false });
+    canvas.addEventListener('touchmove', drawTouch, { passive: false });
+    canvas.addEventListener('touchend', endDrawing);
+
+    function startDrawing(e) {
       drawing = true;
       ctx.beginPath();
-      ctx.moveTo(
-        e.touches[0].clientX - canvas.getBoundingClientRect().left,
-        e.touches[0].clientY - canvas.getBoundingClientRect().top
-      );
-    });
+      ctx.moveTo(e.offsetX, e.offsetY);
+    }
 
-    canvas.addEventListener("touchmove", (e) => {
+    function draw(e) {
       if (!drawing) return;
-      e.preventDefault();
-      ctx.lineTo(
-        e.touches[0].clientX - canvas.getBoundingClientRect().left,
-        e.touches[0].clientY - canvas.getBoundingClientRect().top
-      );
+      ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
-    });
+    }
 
-    canvas.addEventListener("touchend", () => {
+    function endDrawing() {
       drawing = false;
-    });
+    }
 
-    // 저장 이벤트
-    document.getElementById("report-form").addEventListener("submit", function (e) {
+    function startDrawingTouch(e) {
       e.preventDefault();
-      alert("보고서가 저장되었습니다.");
-    });
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      ctx.beginPath();
+      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      drawing = true;
+    }
+
+    function drawTouch(e) {
+      e.preventDefault();
+      if (!drawing) return;
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      ctx.stroke();
+    }
+
+    function resetForm() {
+      document.querySelector("form")?.reset();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach((s) => s.classList.remove("selected"));
+      document.getElementById("uploadedImageBefore").src = "";
+      document.getElementById("uploadedImageAfter").src = "";
+    }
   </script>
 </body>
-
 </html>
