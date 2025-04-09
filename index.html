@@ -1,137 +1,158 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>정촌 올리움 세대민원 처리 보고서</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>민원 처리 보고서</title>
   <style>
     body {
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      position: relative;
-      min-height: 100vh;
-      background-color: #f9f9f9;
-      background-image: url('올리움 아파트 로고.png');
-      background-size: 60%;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      opacity: 1;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      background-color: rgba(255, 255, 255, 0.85);
+      font-family: "Arial", sans-serif;
       padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #f8f8f8;
     }
 
     h1 {
       text-align: center;
-      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     label {
-      display: block;
-      margin: 15px 0 5px;
       font-weight: bold;
     }
 
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
+    input,
+    textarea,
+    select {
+      padding: 8px;
+      font-size: 1rem;
+    }
+
+    .image-preview-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .image-preview-container img {
+      width: 48%;
+      height: auto;
       border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
     }
 
-    button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+    .signature-container {
+      text-align: center;
+      margin-top: 20px;
     }
 
-    button:hover {
-      background-color: #0056b3;
-    }
-
-    canvas {
-      display: block;
-      margin: 20px auto;
+    #signature-pad {
       border: 1px solid #000;
       background-color: #fff;
     }
+
+    .signature-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .signature-buttons button {
+      padding: 8px 12px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>정촌 올리움 세대민원 처리 보고서</h1>
+  <h1>정촌 올리움 세대민원 처리 보고서</h1>
 
-    <label for="date">날짜</label>
-    <input type="date" id="date" name="date">
+  <form>
+    <label for="date">날짜:</label>
+    <input type="date" id="date" name="date" required />
 
-    <label for="address">세대 주소</label>
-    <input type="text" id="address" name="address" placeholder="예: 101동 101호">
+    <label for="address">세대 주소:</label>
+    <input type="text" id="address" name="address" required />
 
-    <label for="issue">민원 내용</label>
-    <textarea id="issue" name="issue" rows="4" placeholder="민원 내용을 입력하세요"></textarea>
+    <label for="content">민원 내용:</label>
+    <textarea id="content" name="content" rows="4" required></textarea>
 
-    <label for="result">처리 결과</label>
-    <textarea id="result" name="result" rows="4" placeholder="처리 결과를 입력하세요"></textarea>
+    <label for="result">처리 결과:</label>
+    <textarea id="result" name="result" rows="4" required></textarea>
 
-    <label for="person">담당자 이름</label>
-    <input type="text" id="person" name="person" placeholder="홍길동">
+    <label for="manager">담당자 이름:</label>
+    <input type="text" id="manager" name="manager" required />
 
-    <label for="photo">사진 첨부</label>
-    <input type="file" id="photo" name="photo" accept="image/*">
+    <label>이미지 (작업 전 / 작업 후):</label>
+    <div class="image-preview-container">
+      <input type="file" accept="image/*" onchange="previewImage(event, 'before')" />
+      <input type="file" accept="image/*" onchange="previewImage(event, 'after')" />
+    </div>
+    <div class="image-preview-container">
+      <img id="preview-before" alt="작업 전 미리보기" />
+      <img id="preview-after" alt="작업 후 미리보기" />
+    </div>
 
-    <label for="signature">서명</label>
-    <canvas id="signature" width="400" height="150"></canvas>
-    <button onclick="clearSignature()">서명 지우기</button>
-    <br>
-    <button onclick="submitForm()">제출</button>
-  </div>
+    <div class="signature-container">
+      <label>입주민 서명:</label>
+      <canvas id="signature-pad" width="400" height="200"></canvas>
+      <div class="signature-buttons">
+        <button type="button" onclick="clearSignature()">초기화</button>
+        <button type="button" onclick="saveSignature()">저장</button>
+      </div>
+    </div>
+  </form>
 
   <script>
-    const canvas = document.getElementById('signature');
-    const ctx = canvas.getContext('2d');
+    function previewImage(event, type) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const output = document.getElementById(`preview-${type}`);
+        output.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    }
+
+    const canvas = document.getElementById("signature-pad");
+    const ctx = canvas.getContext("2d");
     let drawing = false;
 
-    canvas.addEventListener('mousedown', () => drawing = true);
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mouseout', () => drawing = false);
-    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener("mousedown", () => (drawing = true));
+    canvas.addEventListener("mouseup", () => (drawing = false));
+    canvas.addEventListener("mouseout", () => (drawing = false));
+    canvas.addEventListener("mousemove", draw);
 
-    function draw(event) {
+    function draw(e) {
       if (!drawing) return;
-      const rect = canvas.getBoundingClientRect();
       ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#000';
-      ctx.lineTo(event.clientX - rect.left, event.clientY - rect.top);
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "black";
+      ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+      ctx.moveTo(e.offsetX, e.offsetY);
     }
 
     function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.beginPath();
     }
 
-    function submitForm() {
-      alert("제출되었습니다!");
-      // 실제 제출 처리는 백엔드 연동 필요
+    function saveSignature() {
+      const dataURL = canvas.toDataURL();
+      const link = document.createElement("a");
+      link.href = dataURL;
+      link.download = "signature.png";
+      link.click();
     }
   </script>
 </body>
+
 </html>
