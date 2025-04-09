@@ -2,192 +2,193 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
-    * { box-sizing: border-box; }
     body {
-      width: 210mm;
+      font-family: 'Arial', sans-serif;
+      max-width: 794px;
       margin: 0 auto;
       padding: 20px;
-      font-family: 'Arial', sans-serif;
-      background: #fff;
+      background-color: #fff;
     }
-    h2 {
+    h1 {
       text-align: center;
-      margin-bottom: 20px;
     }
-    .form-group {
+    .form-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 10px;
     }
-    .form-group > div {
-      flex: 1;
-      margin: 0 5px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      width: 48%;
     }
     input, select, textarea {
-      width: 100%;
       padding: 8px;
+      font-size: 14px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .image-row {
+    textarea {
+      resize: vertical;
+    }
+    .star-select option {
+      color: #FFD700;
+    }
+    .image-section {
       display: flex;
       justify-content: space-between;
       margin: 20px 0;
     }
-    .image-box {
-      flex: 1;
+    .image-upload {
       text-align: center;
-    }
-    .image-box img {
-      max-width: 100%;
-      height: auto;
-      margin-top: 10px;
-      border: 1px solid #ccc;
+      width: 48%;
     }
     canvas {
       border: 1px solid #ccc;
-      background: #fff;
-      width: 100%;
-      height: 200px;
+      touch-action: none;
     }
-    .btn-row {
-      text-align: center;
-      margin-top: 20px;
+    .signature-controls {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
     }
     button {
-      padding: 10px 20px;
-      margin: 0 10px;
-      font-size: 16px;
+      padding: 8px 12px;
+      font-size: 14px;
       border: none;
       border-radius: 4px;
-      background: #555;
+      background-color: #4CAF50;
       color: white;
       cursor: pointer;
     }
     button:hover {
-      background: #333;
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <h2>정촌 올리움 세대민원 처리 보고서</h2>
-
-  <div class="form-group">
-    <div>
-      <label for="date">날짜:</label>
-      <input type="date" id="date">
+  <h1>정촌 올리움 세대민원 처리 보고서</h1>
+  <div class="form-row">
+    <div class="form-group">
+      <label>날짜:</label>
+      <input type="date">
     </div>
-    <div>
-      <label for="address">세대 주소:</label>
-      <input type="text" id="address">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div>
-      <label for="content">민원 내용:</label>
-      <textarea id="content"></textarea>
-    </div>
-    <div>
-      <label for="result">처리 결과:</label>
-      <textarea id="result"></textarea>
+    <div class="form-group">
+      <label>세대 주소:</label>
+      <input type="text">
     </div>
   </div>
-
-  <div class="form-group">
-    <div>
-      <label for="worker">담당자 이름:</label>
-      <select id="worker">
+  <div class="form-row">
+    <div class="form-group">
+      <label>민원 내용:</label>
+      <textarea rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label>처리 결과:</label>
+      <textarea rows="3"></textarea>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>담당자 이름:</label>
+      <select>
         <option>김원식</option>
         <option>최재혁</option>
         <option>박상우</option>
       </select>
     </div>
-    <div>
-      <label for="satisfaction">만족도 평가:</label>
-      <select id="satisfaction">
-        <option value="1">⭐</option>
-        <option value="2">⭐⭐</option>
-        <option value="3">⭐⭐⭐</option>
-        <option value="4">⭐⭐⭐⭐</option>
-        <option value="5">⭐⭐⭐⭐⭐</option>
+    <div class="form-group">
+      <label>만족도 평가:</label>
+      <select class="star-select">
+        <option>⭐</option>
+        <option>⭐⭐</option>
+        <option>⭐⭐⭐</option>
+        <option>⭐⭐⭐⭐</option>
+        <option>⭐⭐⭐⭐⭐</option>
       </select>
     </div>
   </div>
-
-  <div class="image-row">
-    <div class="image-box">
-      <label for="before">작업 전:</label>
-      <input type="file" id="before" accept="image/*" onchange="previewImage(event, 'beforePreview')">
-      <img id="beforePreview">
+  <div class="image-section">
+    <div class="image-upload">
+      <label>작업 전</label><br>
+      <input type="file" accept="image/*" onchange="loadImage(this, 'beforeImage')">
+      <div><img id="beforeImage" style="max-width:100%; margin-top:10px;"></div>
     </div>
-    <div class="image-box">
-      <label for="after">작업 후:</label>
-      <input type="file" id="after" accept="image/*" onchange="previewImage(event, 'afterPreview')">
-      <img id="afterPreview">
+    <div class="image-upload">
+      <label>작업 후</label><br>
+      <input type="file" accept="image/*" onchange="loadImage(this, 'afterImage')">
+      <div><img id="afterImage" style="max-width:100%; margin-top:10px;"></div>
     </div>
   </div>
-
   <div>
-    <label>입주자 서명:</label>
-    <canvas id="signatureCanvas"></canvas>
+    <label>입주자 서명:</label><br>
+    <canvas id="signature-pad" width="750" height="200"></canvas>
+    <div class="signature-controls">
+      <button onclick="clearSignature()">리셋</button>
+      <button onclick="saveAsImage()">저장</button>
+    </div>
   </div>
-
-  <div class="btn-row">
-    <button onclick="clearCanvas()">리셋</button>
-    <button onclick="saveAsImage()">저장</button>
-  </div>
-
   <script>
-    function previewImage(event, id) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById(id).src = e.target.result;
+    function loadImage(input, targetId) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById(targetId).src = e.target.result;
+        }
+        reader.readAsDataURL(file);
       }
-      reader.readAsDataURL(file);
     }
 
-    const canvas = document.getElementById('signatureCanvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("signature-pad");
+    const ctx = canvas.getContext("2d");
     let drawing = false;
 
-    canvas.addEventListener('mousedown', e => {
+    function startPosition(e) {
       drawing = true;
+      draw(e);
+    }
+    function endPosition() {
+      drawing = false;
       ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-    });
+    }
+    function draw(e) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
 
-    canvas.addEventListener('mousemove', e => {
-      if (drawing) {
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-      }
-    });
+    canvas.addEventListener("mousedown", startPosition);
+    canvas.addEventListener("mouseup", endPosition);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchstart", startPosition);
+    canvas.addEventListener("touchend", endPosition);
+    canvas.addEventListener("touchmove", draw);
 
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mouseleave', () => drawing = false);
-
-    function clearCanvas() {
+    function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function saveAsImage() {
-      html2canvas(document.body).then(canvas => {
-        const link = document.createElement('a');
+      const allContent = document.body;
+      html2canvas(allContent).then(canvas => {
+        const link = document.createElement("a");
         link.download = 'report.png';
         link.href = canvas.toDataURL();
         link.click();
       });
     }
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
