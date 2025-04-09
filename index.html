@@ -1,256 +1,164 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>세대 민원 처리 보고서</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <meta charset="UTF-8">
+  <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
     body {
-      font-family: "Arial", sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
+      font-family: 'Arial', sans-serif;
       padding: 20px;
+      background-color: #fff;
+      max-width: 800px;
+      margin: auto;
     }
-
-    h1 {
+    h2 {
       text-align: center;
-      margin-bottom: 20px;
     }
-
     .row {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 10px;
-    }
-
-    label {
-      font-weight: bold;
-      margin-bottom: 4px;
-      text-align: center;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      padding: 6px;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-    }
-
-    .images {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-    }
-
-    .images img {
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #ccc;
-      margin-top: 5px;
-    }
-
-    .signature {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    #signature-pad {
-      border: 1px solid #000;
-      width: 300px;
-      height: 150px;
-      touch-action: none;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: center;
       gap: 10px;
-      margin-top: 20px;
-    }
-
-    button {
-      background-color: #fff;
-      color: #000;
-      border: 1px solid #000;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-
-    .hidden-input {
-      display: none;
-    }
-
-    .file-button {
-      padding: 6px 12px;
-      background-color: #f0f0f0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      cursor: pointer;
       margin-bottom: 10px;
     }
-
-    select option {
-      font-size: 18px;
+    .row input, .row textarea {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+    }
+    textarea {
+      resize: vertical;
+    }
+    .label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .star-rating {
+      font-size: 24px;
+      color: gold;
+    }
+    .photo-section, .signature-section {
+      margin-top: 20px;
+    }
+    .photo-preview {
+      max-width: 100%;
+      height: auto;
+      margin-top: 5px;
+    }
+    canvas {
+      border: 1px solid #000;
+      background-color: #fff;
+      width: 100%;
+      height: 200px;
+    }
+    .buttons {
+      text-align: center;
+      margin-top: 10px;
+    }
+    button {
+      margin: 0 5px;
+      padding: 10px 20px;
+      font-size: 16px;
     }
   </style>
 </head>
-
 <body>
-  <h1>세대 민원 처리 보고서</h1>
+  <h2>정촌 올리움 세대민원 처리 보고서</h2>
 
-  <div id="report-content">
-    <div class="row">
-      <div class="column">
-        <label for="date">날짜</label>
-        <input type="date" id="date" name="date" />
-      </div>
-      <div class="column">
-        <label for="address">세대 주소</label>
-        <input type="text" id="address" name="address" />
-      </div>
+  <div class="row">
+    <div style="flex: 1;">
+      <div class="label">날짜:</div>
+      <input type="date" id="date">
     </div>
-
-    <div class="row">
-      <div class="column">
-        <label for="content">민원 내용</label>
-        <textarea id="content" name="content" rows="5"></textarea>
-      </div>
-      <div class="column">
-        <label for="result">처리 결과</label>
-        <textarea id="result" name="result" rows="5"></textarea>
-      </div>
+    <div style="flex: 1;">
+      <div class="label">세대 주소:</div>
+      <input type="text" id="address">
     </div>
+  </div>
 
-    <div class="row">
-      <div class="column">
-        <label for="manager">담당자 이름</label>
-        <select id="manager" name="manager">
-          <option>김원식</option>
-          <option>최재혁</option>
-          <option>박상우</option>
-        </select>
-      </div>
-      <div class="column">
-        <label for="satisfaction">만족도 평가</label>
-        <select id="satisfaction" name="satisfaction">
-          <option value="1">⭐</option>
-          <option value="2">⭐⭐</option>
-          <option value="3">⭐⭐⭐</option>
-          <option value="4">⭐⭐⭐⭐</option>
-          <option value="5">⭐⭐⭐⭐⭐</option>
-        </select>
-      </div>
+  <div class="row">
+    <div style="flex: 1;">
+      <div class="label">민원 내용:</div>
+      <textarea id="issue"></textarea>
     </div>
-
-    <div class="images">
-      <div class="column">
-        <label class="file-button" onclick="document.getElementById('beforeInput').click()">작업 전 사진 선택</label>
-        <input type="file" id="beforeInput" class="hidden-input" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')" />
-        <img id="uploadedImageBefore" src="" alt="작업 전 이미지" />
-      </div>
-      <div class="column">
-        <label class="file-button" onclick="document.getElementById('afterInput').click()">작업 후 사진 선택</label>
-        <input type="file" id="afterInput" class="hidden-input" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')" />
-        <img id="uploadedImageAfter" src="" alt="작업 후 이미지" />
-      </div>
+    <div style="flex: 1;">
+      <div class="label">처리 결과:</div>
+      <textarea id="result"></textarea>
     </div>
+  </div>
 
-    <div class="signature">
-      <label>입주자 서명</label>
-      <canvas id="signature-pad" width="300" height="150"></canvas>
-      <br />
-      <button type="button" onclick="clearSignature()">서명 지우기</button>
+  <div class="row">
+    <div style="flex: 1;">
+      <div class="label">담당자 이름:</div>
+      <input type="text" id="manager">
     </div>
+    <div style="flex: 1;">
+      <div class="label">만족도 평가:</div>
+      <div class="star-rating">★★★★★</div>
+    </div>
+  </div>
 
+  <div class="photo-section">
+    <div class="label">작업 전</div>
+    <input type="file" accept="image/*" id="beforePhoto" onchange="loadImage(event, 'beforePreview')">
+    <img id="beforePreview" class="photo-preview" />
+  </div>
+
+  <div class="photo-section">
+    <div class="label">작업 후</div>
+    <input type="file" accept="image/*" id="afterPhoto" onchange="loadImage(event, 'afterPreview')">
+    <img id="afterPreview" class="photo-preview" />
+  </div>
+
+  <div class="signature-section">
+    <div class="label">입주자 서명:</div>
+    <canvas id="signaturePad"></canvas>
     <div class="buttons">
-      <button onclick="clearSignature()">리셋</button>
+      <button onclick="clearCanvas()">리셋</button>
       <button onclick="saveReport()">저장</button>
     </div>
   </div>
 
   <script>
-    function loadImage(event, imageId) {
+    function loadImage(event, targetId) {
       const reader = new FileReader();
-      reader.onload = function () {
-        const img = document.getElementById(imageId);
-        img.src = reader.result;
+      reader.onload = function() {
+        document.getElementById(targetId).src = reader.result;
       };
       reader.readAsDataURL(event.target.files[0]);
     }
 
-    // 서명 패드 동작
-    const canvas = document.getElementById('signature-pad');
+    // 서명 캔버스
+    const canvas = document.getElementById('signaturePad');
     const ctx = canvas.getContext('2d');
     let drawing = false;
-    let lastX = 0;
-    let lastY = 0;
 
-    function startDrawing(x, y) {
-      drawing = true;
-      [lastX, lastY] = [x, y];
-    }
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mousemove', draw);
 
-    function draw(x, y) {
+    canvas.addEventListener('touchstart', () => drawing = true);
+    canvas.addEventListener('touchend', () => drawing = false);
+    canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
+
+    function draw(e) {
       if (!drawing) return;
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(x, y);
-      ctx.strokeStyle = '#000';
+      const rect = canvas.getBoundingClientRect();
       ctx.lineWidth = 2;
       ctx.lineCap = 'round';
+      ctx.strokeStyle = 'black';
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
       ctx.stroke();
-      [lastX, lastY] = [x, y];
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
     }
 
-    function stopDrawing() {
-      drawing = false;
-    }
-
-    canvas.addEventListener('mousedown', e => startDrawing(e.offsetX, e.offsetY));
-    canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-
-    canvas.addEventListener('touchstart', e => {
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
-    });
-
-    canvas.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const touch = e.touches[0];
-      draw(touch.clientX - rect.left, touch.clientY - rect.top);
-    }, { passive: false });
-
-    canvas.addEventListener('touchend', stopDrawing);
-
-    function clearSignature() {
+    function clearCanvas() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
     }
 
     function saveReport() {
-      html2canvas(document.getElementById("report-content")).then(canvas => {
-        const link = document.createElement("a");
-        link.download = "report.png";
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+      alert("보고서 저장 기능은 추후 구현 예정입니다.");
     }
   </script>
 </body>
-
 </html>
