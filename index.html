@@ -1,140 +1,149 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>민원 처리 보고서</title>
+  <meta charset="UTF-8">
+  <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
     body {
-      font-family: "Arial", sans-serif;
-      padding: 20px;
-      background-color: #f8f8f8;
+      font-family: 'Malgun Gothic', sans-serif;
+      background-color: #f5f5f5;
+      padding: 40px;
+      max-width: 794px;
+      margin: auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     h1 {
       text-align: center;
+      margin-bottom: 40px;
+      font-size: 24px;
     }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 600px;
-      margin: 0 auto;
+    .section {
+      margin-bottom: 30px;
     }
-
     label {
+      display: block;
+      margin-bottom: 5px;
       font-weight: bold;
     }
-
-    input,
-    textarea,
-    select {
+    input[type="text"], input[type="date"], textarea {
+      width: 100%;
       padding: 8px;
-      font-size: 1rem;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
     }
-
-    .image-preview-container {
+    textarea {
+      resize: vertical;
+    }
+    .image-section {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
+      align-items: flex-start;
+      gap: 20px;
     }
-
-    .image-preview-container img {
+    .image-preview {
       width: 48%;
-      height: auto;
+    }
+    .image-preview img {
+      width: 100%;
       border: 1px solid #ccc;
+      border-radius: 4px;
     }
-
-    .signature-container {
+    .signature-section {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 40px;
     }
-
-    #signature-pad {
+    canvas {
       border: 1px solid #000;
-      background-color: #fff;
+      margin-bottom: 10px;
     }
-
-    .signature-buttons {
+    .button-group {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 10px;
     }
-
-    .signature-buttons button {
-      padding: 8px 12px;
-      font-size: 1rem;
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: white;
       cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
-
 <body>
   <h1>정촌 올리움 세대민원 처리 보고서</h1>
+  
+  <div class="section">
+    <label for="date">날짜</label>
+    <input type="date" id="date">
 
-  <form>
-    <label for="date">날짜:</label>
-    <input type="date" id="date" name="date" required />
+    <label for="address">세대 주소</label>
+    <input type="text" id="address">
 
-    <label for="address">세대 주소:</label>
-    <input type="text" id="address" name="address" required />
+    <label for="issue">민원 내용</label>
+    <textarea id="issue" rows="4"></textarea>
 
-    <label for="content">민원 내용:</label>
-    <textarea id="content" name="content" rows="4" required></textarea>
+    <label for="result">처리 결과</label>
+    <textarea id="result" rows="4"></textarea>
 
-    <label for="result">처리 결과:</label>
-    <textarea id="result" name="result" rows="4" required></textarea>
+    <label for="manager">담당자 이름</label>
+    <input type="text" id="manager">
+  </div>
 
-    <label for="manager">담당자 이름:</label>
-    <input type="text" id="manager" name="manager" required />
-
-    <label>이미지 (작업 전 / 작업 후):</label>
-    <div class="image-preview-container">
-      <input type="file" accept="image/*" onchange="previewImage(event, 'before')" />
-      <input type="file" accept="image/*" onchange="previewImage(event, 'after')" />
+  <div class="section image-section">
+    <div class="image-preview">
+      <label for="beforeImage">작업 전 사진</label>
+      <input type="file" id="beforeImage" accept="image/*" onchange="previewImage(event, 'beforePreview')">
+      <img id="beforePreview" src="" alt="작업 전 사진 미리보기">
     </div>
-    <div class="image-preview-container">
-      <img id="preview-before" alt="작업 전 미리보기" />
-      <img id="preview-after" alt="작업 후 미리보기" />
+    <div class="image-preview">
+      <label for="afterImage">작업 후 사진</label>
+      <input type="file" id="afterImage" accept="image/*" onchange="previewImage(event, 'afterPreview')">
+      <img id="afterPreview" src="" alt="작업 후 사진 미리보기">
     </div>
+  </div>
 
-    <div class="signature-container">
-      <label>입주민 서명:</label>
-      <canvas id="signature-pad" width="400" height="200"></canvas>
-      <div class="signature-buttons">
-        <button type="button" onclick="clearSignature()">초기화</button>
-        <button type="button" onclick="saveSignature()">저장</button>
-      </div>
+  <div class="signature-section">
+    <label>서명</label>
+    <canvas id="signature" width="500" height="150"></canvas>
+    <div class="button-group">
+      <button onclick="clearSignature()">초기화</button>
+      <button onclick="saveSignature()">저장</button>
     </div>
-  </form>
+  </div>
 
   <script>
-    function previewImage(event, type) {
+    function previewImage(event, previewId) {
+      const input = event.target;
       const reader = new FileReader();
-      reader.onload = function () {
-        const output = document.getElementById(`preview-${type}`);
-        output.src = reader.result;
+      reader.onload = function(){
+        const img = document.getElementById(previewId);
+        img.src = reader.result;
       };
-      reader.readAsDataURL(event.target.files[0]);
+      reader.readAsDataURL(input.files[0]);
     }
 
-    const canvas = document.getElementById("signature-pad");
-    const ctx = canvas.getContext("2d");
-    let drawing = false;
+    const canvas = document.getElementById('signature');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
 
-    canvas.addEventListener("mousedown", () => (drawing = true));
-    canvas.addEventListener("mouseup", () => (drawing = false));
-    canvas.addEventListener("mouseout", () => (drawing = false));
-    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => isDrawing = false);
+    canvas.addEventListener('mousemove', draw);
 
     function draw(e) {
-      if (!drawing) return;
+      if (!isDrawing) return;
       ctx.lineWidth = 2;
-      ctx.lineCap = "round";
-      ctx.strokeStyle = "black";
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
       ctx.beginPath();
@@ -147,12 +156,11 @@
 
     function saveSignature() {
       const dataURL = canvas.toDataURL();
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "signature.png";
-      link.click();
+      const a = document.createElement('a');
+      a.href = dataURL;
+      a.download = 'signature.png';
+      a.click();
     }
   </script>
 </body>
-
 </html>
