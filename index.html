@@ -4,275 +4,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>정촌 올리움 세대민원 처리 보고서</title>
+  <title>세대 민원 처리 보고서</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      width: 210mm;
-      min-height: 297mm;
+      font-family: "Arial", sans-serif;
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px;
-      background: #fff;
-      box-sizing: border-box;
     }
 
     h1 {
       text-align: center;
-      font-size: 24px;
       margin-bottom: 20px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     .row {
       display: flex;
-      justify-content: center;
-      gap: 40px;
-      width: 100%;
-      margin-bottom: 10px;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
 
-    .field {
+    .column {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 45%;
+      padding: 0 10px;
     }
 
     label {
       font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-
-    textarea {
-      resize: vertical;
-      height: 80px;
-    }
-
-    #uploadedImageBefore,
-    #uploadedImageAfter {
-      margin-top: 10px;
-      max-width: 300px;
-    }
-
-    .image-upload-section {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-
-    .image-upload {
+      margin-bottom: 4px;
       text-align: center;
     }
 
-    .image-upload label {
-      cursor: pointer;
-      display: inline-block;
-      padding: 8px 14px;
-      background-color: #f0f0f0;
-      border-radius: 4px;
-      margin-bottom: 6px;
+    input,
+    textarea {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
     }
 
-    .signature-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 30px;
-    }
-
-    canvas {
-      border: 1px solid #ccc;
-      margin-top: 10px;
-      touch-action: none;
-    }
-
-    .buttons {
+    .star-rating {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 8px 14px;
-      font-size: 14px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.85;
-    }
-
-    #captureArea {
-      padding: 20px;
-      border: 1px solid #ddd;
+      gap: 4px;
+      margin-bottom: 16px;
     }
 
     .star {
+      font-size: 28px;
       color: gold;
-      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .images {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+    }
+
+    .images img {
+      max-width: 45%;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+
+    .signature {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .signature-pad {
+      border: 1px solid #000;
+      width: 300px;
+      height: 150px;
+      margin: 10px auto;
+    }
+
+    /* 파일 선택 버튼 커스터마이징 */
+    input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-label {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 
 <body>
-  <div id="captureArea">
-    <h1>정촌 올리움 세대민원 처리 보고서</h1>
-    <form>
-      <div class="row">
-        <div class="field">
-          <label for="date">날짜:</label>
-          <input type="date" id="date" name="date">
-        </div>
-        <div class="field">
-          <label for="address">세대 주소:</label>
-          <input type="text" id="address" name="address">
-        </div>
-      </div>
+  <h1>세대 민원 처리 보고서</h1>
 
-      <div class="row">
-        <div class="field">
-          <label for="content">민원 내용:</label>
-          <textarea id="content" name="content"></textarea>
-        </div>
-        <div class="field">
-          <label for="result">처리 결과:</label>
-          <textarea id="result" name="result"></textarea>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label for="manager">담당자 이름:</label>
-          <select id="manager" name="manager">
-            <option value="김원식">김원식</option>
-            <option value="최재혁">최재혁</option>
-            <option value="박상우">박상우</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="satisfaction">만족도 평가:</label>
-          <select id="satisfaction" name="satisfaction">
-            <option value="1">⭐</option>
-            <option value="2">⭐⭐</option>
-            <option value="3">⭐⭐⭐</option>
-            <option value="4">⭐⭐⭐⭐</option>
-            <option value="5">⭐⭐⭐⭐⭐</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="image-upload-section">
-        <div class="image-upload">
-          <label for="before">작업 전</label>
-          <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
-          <img id="uploadedImageBefore" src="" alt="작업 전">
-        </div>
-
-        <div class="image-upload">
-          <label for="after">작업 후</label>
-          <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
-          <img id="uploadedImageAfter" src="" alt="작업 후">
-        </div>
-      </div>
-
-      <div class="signature-container">
-        <label for="signatureCanvas">입주자 서명:</label>
-        <canvas id="signatureCanvas" width="400" height="150"></canvas>
-        <div class="buttons">
-          <button type="button" onclick="clearSignature()">리셋</button>
-          <button type="button" onclick="saveAsImage()">저장</button>
-        </div>
-      </div>
-    </form>
+  <div class="row">
+    <div class="column">
+      <label for="date">날짜</label>
+      <input type="date" id="date" name="date">
+    </div>
+    <div class="column">
+      <label for="address">세대 주소</label>
+      <input type="text" id="address" name="address">
+    </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <div class="row">
+    <div class="column">
+      <label for="content">민원 내용</label>
+      <textarea id="content" name="content" rows="5"></textarea>
+    </div>
+    <div class="column">
+      <label for="result">처리 결과</label>
+      <textarea id="result" name="result" rows="5"></textarea>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="column">
+      <label for="manager">담당자 이름</label>
+      <input type="text" id="manager" name="manager">
+    </div>
+    <div class="column">
+      <label>만족도 평가</label>
+      <div class="star-rating">
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+        <span class="star">★</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="images">
+    <div class="column">
+      <label for="before" class="custom-file-label">작업 전 사진</label>
+      <input type="file" id="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
+      <img id="uploadedImageBefore" src="" alt="작업 전 이미지">
+    </div>
+    <div class="column">
+      <label for="after" class="custom-file-label">작업 후 사진</label>
+      <input type="file" id="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
+      <img id="uploadedImageAfter" src="" alt="작업 후 이미지">
+    </div>
+  </div>
+
+  <div class="signature">
+    <label>입주자 서명</label>
+    <div class="signature-pad"></div>
+  </div>
+
   <script>
-    const canvas = document.getElementById('signatureCanvas');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
-
-    function startPosition(e) {
-      drawing = true;
-      ctx.beginPath();
-      ctx.moveTo(getX(e), getY(e));
-    }
-
-    function endPosition() {
-      drawing = false;
-      ctx.beginPath();
-    }
-
-    function draw(e) {
-      if (!drawing) return;
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#000';
-      ctx.lineTo(getX(e), getY(e));
-      ctx.stroke();
-    }
-
-    function getX(e) {
-      return e.touches ? e.touches[0].clientX - canvas.getBoundingClientRect().left : e.offsetX;
-    }
-
-    function getY(e) {
-      return e.touches ? e.touches[0].clientY - canvas.getBoundingClientRect().top : e.offsetY;
-    }
-
-    canvas.addEventListener('mousedown', startPosition);
-    canvas.addEventListener('mouseup', endPosition);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchstart', startPosition);
-    canvas.addEventListener('touchend', endPosition);
-    canvas.addEventListener('touchmove', draw);
-
-    function clearSignature() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function saveAsImage() {
-      html2canvas(document.getElementById("captureArea"), {
-        scale: 2
-      }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = '민원처리보고서.png';
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      });
-    }
-
-    function loadImage(event, targetId) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          document.getElementById(targetId).src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-      }
+    function loadImage(event, imageId) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const img = document.getElementById(imageId);
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
     }
   </script>
 </body>
