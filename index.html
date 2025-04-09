@@ -1,72 +1,140 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>정촌 올리움 민원 처리 보고서</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
-    /* 전체 배경 스타일 */
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Arial', sans-serif;
-      background-color: #f4f4f4;
-    }
-
-    /* 로고 배경용 */
-    .logo-background {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      width: 400px;
-      height: 400px;
+      position: relative;
+      min-height: 100vh;
+      background-color: #f9f9f9;
       background-image: url('올리움 아파트 로고.png');
-      background-size: contain;
-      background-repeat: no-repeat;
+      background-size: 60%;
       background-position: center;
-      opacity: 0.07; /* 흐릿하게 조정 */
-      transform: translate(-50%, -50%);
-      z-index: 0;
-      pointer-events: none; /* 마우스 이벤트 무시 */
+      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
 
-    /* 메인 내용 배경 */
-    .overlay {
+    .container {
       position: relative;
       z-index: 1;
-      background-color: rgba(255, 255, 255, 0.9);
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
-
-    /* 민원 등록 컨테이너 */
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
+      background-color: rgba(255, 255, 255, 0.85);
       padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     h1 {
       text-align: center;
       color: #333;
-      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    canvas {
+      display: block;
+      margin: 20px auto;
+      border: 1px solid #000;
+      background-color: #fff;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>정촌 올리움 세대민원 처리 보고서</h1>
 
-  <!-- 흐릿한 로고 배경 -->
-  <div class="logo-background"></div>
+    <label for="date">날짜</label>
+    <input type="date" id="date" name="date" />
 
-  <!-- 본문 내용 -->
-  <div class="overlay">
-    <div class="container">
-      <h1>민원 등록</h1>
-      <!-- 여기에 입력 폼 등이 들어갑니다 -->
-    </div>
+    <label for="address">세대 주소</label>
+    <input type="text" id="address" name="address" placeholder="예: 101동 101호" />
+
+    <label for="issue">민원 내용</label>
+    <textarea id="issue" name="issue" rows="4" placeholder="민원 내용을 입력하세요"></textarea>
+
+    <label for="result">처리 결과</label>
+    <textarea id="result" name="result" rows="4" placeholder="처리 결과를 입력하세요"></textarea>
+
+    <label for="person">담당자 이름</label>
+    <input type="text" id="person" name="person" placeholder="홍길동" />
+
+    <label for="photo">사진 첨부</label>
+    <input type="file" id="photo" name="photo" accept="image/*" />
+
+    <label for="signature">서명</label>
+    <canvas id="signature" width="400" height="150"></canvas>
+    <button onclick="clearSignature()">서명 지우기</button>
+
+    <br />
+    <button onclick="submitForm()">제출</button>
   </div>
 
+  <script>
+    const canvas = document.getElementById('signature');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => {
+      drawing = false;
+      ctx.beginPath();
+    });
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseout', () => drawing = false);
+
+    function draw(event) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      ctx.lineTo(event.clientX - rect.left, event.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(event.clientX - rect.left, event.clientY - rect.top);
+    }
+
+    function clearSignature() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+    }
+
+    function submitForm() {
+      alert('제출되었습니다!');
+      // 실제 제출 로직은 서버 연결 필요
+    }
+  </script>
 </body>
 </html>
