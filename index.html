@@ -1,166 +1,166 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
     body {
       font-family: 'Malgun Gothic', sans-serif;
-      background-color: #f5f5f5;
+      margin: 0;
       padding: 40px;
-      max-width: 794px;
-      margin: auto;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #fff;
     }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
     h1 {
       text-align: center;
-      margin-bottom: 40px;
       font-size: 24px;
-    }
-    .section {
       margin-bottom: 30px;
     }
+
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-top: 15px;
       font-weight: bold;
     }
-    input[type="text"], input[type="date"], textarea {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
+
+    input,
     textarea {
-      resize: vertical;
-    }
-    .image-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 20px;
-    }
-    .image-preview {
-      width: 48%;
-    }
-    .image-preview img {
       width: 100%;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .signature-section {
-      text-align: center;
-      margin-top: 40px;
-    }
-    canvas {
-      border: 1px solid #000;
-      margin-bottom: 10px;
-    }
-    .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
       font-size: 14px;
     }
-    button:hover {
-      background-color: #45a049;
+
+    .photo-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .photo-box {
+      width: 48%;
+    }
+
+    canvas {
+      border: 1px solid #000;
+      display: block;
+      margin: 10px auto;
+    }
+
+    .signature-controls {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .signature-controls button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
-  <h1>정촌 올리움 세대민원 처리 보고서</h1>
-  
-  <div class="section">
-    <label for="date">날짜</label>
-    <input type="date" id="date">
+  <div class="container" id="report">
+    <h1>정촌 올리움 세대민원 처리 보고서</h1>
+    <form>
+      <label for="date">날짜</label>
+      <input type="date" id="date" name="date" />
 
-    <label for="address">세대 주소</label>
-    <input type="text" id="address">
+      <label for="address">세대 주소</label>
+      <input type="text" id="address" name="address" />
 
-    <label for="issue">민원 내용</label>
-    <textarea id="issue" rows="4"></textarea>
+      <label for="content">민원 내용</label>
+      <textarea id="content" name="content" rows="4"></textarea>
 
-    <label for="result">처리 결과</label>
-    <textarea id="result" rows="4"></textarea>
+      <label for="result">처리 결과</label>
+      <textarea id="result" name="result" rows="4"></textarea>
 
-    <label for="manager">담당자 이름</label>
-    <input type="text" id="manager">
-  </div>
+      <label for="manager">담당자 이름</label>
+      <input type="text" id="manager" name="manager" />
 
-  <div class="section image-section">
-    <div class="image-preview">
-      <label for="beforeImage">작업 전 사진</label>
-      <input type="file" id="beforeImage" accept="image/*" onchange="previewImage(event, 'beforePreview')">
-      <img id="beforePreview" src="" alt="작업 전 사진 미리보기">
-    </div>
-    <div class="image-preview">
-      <label for="afterImage">작업 후 사진</label>
-      <input type="file" id="afterImage" accept="image/*" onchange="previewImage(event, 'afterPreview')">
-      <img id="afterPreview" src="" alt="작업 후 사진 미리보기">
-    </div>
-  </div>
+      <div class="photo-row">
+        <div class="photo-box">
+          <label for="beforePhoto">작업 전 사진</label>
+          <input type="file" id="beforePhoto" accept="image/*" />
+        </div>
+        <div class="photo-box">
+          <label for="afterPhoto">작업 후 사진</label>
+          <input type="file" id="afterPhoto" accept="image/*" />
+        </div>
+      </div>
 
-  <div class="signature-section">
-    <label>서명</label>
-    <canvas id="signature" width="500" height="150"></canvas>
-    <div class="button-group">
-      <button onclick="clearSignature()">초기화</button>
-      <button onclick="saveSignature()">저장</button>
-    </div>
+      <label>서명</label>
+      <canvas id="signature" width="500" height="200"></canvas>
+      <div class="signature-controls">
+        <button type="button" onclick="clearSignature()">초기화</button>
+        <button type="button" onclick="saveAsImage()">저장</button>
+      </div>
+    </form>
   </div>
 
   <script>
-    function previewImage(event, previewId) {
-      const input = event.target;
-      const reader = new FileReader();
-      reader.onload = function(){
-        const img = document.getElementById(previewId);
-        img.src = reader.result;
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
+    const canvas = document.getElementById("signature");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
 
-    const canvas = document.getElementById('signature');
-    const ctx = canvas.getContext('2d');
-    let isDrawing = false;
-
-    canvas.addEventListener('mousedown', () => isDrawing = true);
-    canvas.addEventListener('mouseup', () => isDrawing = false);
-    canvas.addEventListener('mousemove', draw);
-
-    function draw(e) {
-      if (!isDrawing) return;
-      ctx.lineWidth = 2;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = '#000';
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
+    canvas.addEventListener("mousedown", (e) => {
+      drawing = true;
       ctx.beginPath();
       ctx.moveTo(e.offsetX, e.offsetY);
-    }
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (drawing) {
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+      }
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      drawing = false;
+    });
 
     function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function saveSignature() {
-      const dataURL = canvas.toDataURL();
-      const a = document.createElement('a');
-      a.href = dataURL;
-      a.download = 'signature.png';
-      a.click();
+    function saveAsImage() {
+      html2canvas(document.getElementById("report"), {
+        scale: 3
+      }).then(function(canvas) {
+        const link = document.createElement("a");
+        link.download = "report.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
     }
   </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
+
 </html>
