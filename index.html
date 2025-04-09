@@ -1,111 +1,110 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
-    /* 배경이미지 적용 */
     body {
-      margin: 0;
-      padding: 0;
       font-family: 'Arial', sans-serif;
-      background-image: url("올리움 아파트 로고.png");
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: 60%;
-      background-attachment: fixed;
-      background-color: #f0f0f0;
-    }
-
-    .overlay {
-      background-color: rgba(255, 255, 255, 0.85);
-      min-height: 100vh;
+      background-color: #f2f2f2;
       padding: 20px;
     }
 
     .container {
       max-width: 800px;
       margin: 0 auto;
-      background-color: white;
+      background-color: #fff;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     h1 {
       text-align: center;
       color: #333;
+      margin-bottom: 30px;
     }
 
     label {
-      display: block;
-      margin-top: 15px;
       font-weight: bold;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 5px;
     }
 
-    input, textarea {
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    input[type="file"] {
       width: 100%;
       padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 10px;
+      border-radius: 6px;
       border: 1px solid #ccc;
-      border-radius: 5px;
       box-sizing: border-box;
     }
 
+    textarea {
+      resize: vertical;
+    }
+
+    canvas {
+      display: block;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      background-color: #fff;
+    }
+
     button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 15px;
+      margin-top: 20px;
+      padding: 12px 20px;
       background-color: #007bff;
-      color: white;
+      color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
+      width: 100%;
     }
 
     button:hover {
       background-color: #0056b3;
     }
 
-    canvas {
-      display: block;
-      margin: 20px auto;
-      border: 1px solid #000;
-      background-color: #fff;
+    .signature-section {
+      text-align: center;
     }
+
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div class="container">
-      <h1>정촌 올리움 세대민원 처리 보고서</h1>
+  <div class="container">
+    <h1>정촌 올리움 세대민원 처리 보고서</h1>
 
-      <label for="date">날짜</label>
-      <input type="date" id="date" name="date">
+    <label for="date">날짜</label>
+    <input type="date" id="date" name="date" />
 
-      <label for="address">세대 주소</label>
-      <input type="text" id="address" name="address" placeholder="예: 101동 101호">
+    <label for="address">세대 주소</label>
+    <input type="text" id="address" name="address" placeholder="예: 101동 1001호" />
 
-      <label for="issue">민원 내용</label>
-      <textarea id="issue" name="issue" rows="4" placeholder="민원 내용을 입력하세요"></textarea>
+    <label for="issue">민원 내용</label>
+    <textarea id="issue" name="issue" rows="4" placeholder="민원 내용을 입력하세요"></textarea>
 
-      <label for="result">처리 결과</label>
-      <textarea id="result" name="result" rows="4" placeholder="처리 결과를 입력하세요"></textarea>
+    <label for="result">처리 결과</label>
+    <textarea id="result" name="result" rows="4" placeholder="처리 결과를 입력하세요"></textarea>
 
-      <label for="person">담당자 이름</label>
-      <input type="text" id="person" name="person" placeholder="홍길동">
+    <label for="person">담당자 이름</label>
+    <input type="text" id="person" name="person" placeholder="홍길동" />
 
-      <label for="photo">사진 첨부</label>
-      <input type="file" id="photo" name="photo" accept="image/*">
-
+    <div class="signature-section">
       <label for="signature">서명</label>
       <canvas id="signature" width="400" height="150"></canvas>
       <button type="button" onclick="clearSignature()">서명 지우기</button>
-
-      <button type="button" onclick="submitForm()">제출</button>
     </div>
+
+    <label for="photo">사진 첨부</label>
+    <input type="file" id="photo" name="photo" accept="image/*" />
+
+    <button type="button" onclick="submitForm()">제출</button>
   </div>
 
   <script>
