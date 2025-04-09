@@ -22,17 +22,10 @@
       margin-bottom: 20px;
     }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
     label {
+      display: block;
       margin-top: 10px;
       font-weight: bold;
-      text-align: left;
-      width: 60%;
     }
 
     input[type="text"],
@@ -52,23 +45,21 @@
       height: 80px;
     }
 
-    .image-row {
+    #uploadedImageBefore,
+    #uploadedImageAfter {
+      margin-top: 10px;
+      max-width: 300px;
+    }
+
+    .image-section {
       display: flex;
       justify-content: center;
       gap: 40px;
       margin-top: 10px;
-      width: 100%;
     }
 
-    .image-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .image-container img {
-      margin-top: 10px;
-      max-width: 300px;
+    .image-upload {
+      text-align: center;
     }
 
     .signature-container {
@@ -79,9 +70,6 @@
     canvas {
       border: 1px solid #ccc;
       margin-top: 10px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
     }
 
     .buttons {
@@ -106,6 +94,7 @@
     #captureArea {
       padding: 20px;
       border: 1px solid #ddd;
+      text-align: center;
     }
   </style>
 </head>
@@ -127,27 +116,22 @@
       <textarea id="result" name="result"></textarea>
 
       <label for="manager">담당자 이름:</label>
-      <input type="text" id="manager" name="manager">
-
-      <label for="satisfaction">만족도 평가:</label>
-      <select id="satisfaction" name="satisfaction">
-        <option value="1">⭐</option>
-        <option value="2">⭐⭐</option>
-        <option value="3">⭐⭐⭐</option>
-        <option value="4">⭐⭐⭐⭐</option>
-        <option value="5">⭐⭐⭐⭐⭐</option>
+      <select id="manager" name="manager">
+        <option value="김원식">김원식</option>
+        <option value="최재혁">최재혁</option>
+        <option value="박상우">박상우</option>
       </select>
 
-      <div class="image-row">
-        <div class="image-container">
-          <label for="beforeImage">Before</label>
+      <div class="image-section">
+        <div class="image-upload">
+          <label for="beforeImage">작업 전</label>
           <input type="file" id="beforeImage" name="beforeImage" accept="image/*">
-          <img id="beforePreview" src="">
+          <img id="uploadedImageBefore" src="" alt="작업 전 이미지">
         </div>
-        <div class="image-container">
-          <label for="afterImage">After</label>
+        <div class="image-upload">
+          <label for="afterImage">작업 후</label>
           <input type="file" id="afterImage" name="afterImage" accept="image/*">
-          <img id="afterPreview" src="">
+          <img id="uploadedImageAfter" src="" alt="작업 후 이미지">
         </div>
       </div>
 
@@ -206,7 +190,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById('beforePreview').src = e.target.result;
+          document.getElementById('uploadedImageBefore').src = e.target.result;
         }
         reader.readAsDataURL(file);
       }
@@ -217,7 +201,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById('afterPreview').src = e.target.result;
+          document.getElementById('uploadedImageAfter').src = e.target.result;
         }
         reader.readAsDataURL(file);
       }
