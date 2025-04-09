@@ -14,6 +14,18 @@
       padding: 20px;
       background: #fff;
       box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+    }
+
+    #captureArea {
+      width: 100%;
+      max-width: 800px;
+      padding: 30px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background: #fff;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -24,19 +36,21 @@
 
     label {
       display: block;
-      margin-top: 10px;
+      margin-top: 12px;
       font-weight: bold;
     }
 
     input[type="text"],
     input[type="date"],
     textarea {
-      width: 60%;
+      width: 100%;
+      max-width: 500px;
       padding: 6px;
       margin-top: 4px;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 14px;
+      box-sizing: border-box;
     }
 
     textarea {
@@ -45,6 +59,7 @@
     }
 
     #uploadedImage {
+      display: block;
       margin-top: 10px;
       max-width: 300px;
     }
@@ -77,11 +92,6 @@
     button:hover {
       opacity: 0.85;
     }
-
-    #captureArea {
-      padding: 20px;
-      border: 1px solid #ddd;
-    }
   </style>
 </head>
 
@@ -110,7 +120,7 @@
 
       <div class="signature-container">
         <label for="signatureCanvas">입주자 서명:</label>
-        <canvas id="signatureCanvas" width="400" height="150"></canvas>
+        <canvas id="signatureCanvas" width="500" height="150"></canvas>
         <div class="buttons">
           <button type="button" onclick="clearSignature()">리셋</button>
           <button type="button" onclick="saveAsImage()">저장</button>
@@ -126,7 +136,10 @@
     let drawing = false;
 
     canvas.addEventListener('mousedown', () => drawing = true);
-    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseup', () => {
+      drawing = false;
+      ctx.beginPath();
+    });
     canvas.addEventListener('mousemove', draw);
 
     function draw(e) {
@@ -146,7 +159,7 @@
 
     function saveAsImage() {
       html2canvas(document.getElementById("captureArea"), {
-        scale: 2
+        scale: 3
       }).then(canvas => {
         const link = document.createElement('a');
         link.download = '민원처리보고서.png';
