@@ -8,18 +8,11 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 40px 0;
-    }
-
-    #captureArea {
-      background: #fff;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
       padding: 20px;
-      border: 1px solid #ddd;
+      background: #fff;
       box-sizing: border-box;
     }
 
@@ -29,8 +22,15 @@
       margin-bottom: 20px;
     }
 
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     label {
-      display: block;
+      width: 100%;
+      text-align: center;
       margin-top: 10px;
       font-weight: bold;
     }
@@ -41,10 +41,11 @@
     select {
       width: 60%;
       padding: 6px;
-      margin-top: 4px;
+      margin: 6px auto 10px auto;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 14px;
+      display: block;
     }
 
     textarea {
@@ -64,25 +65,23 @@
       text-align: center;
     }
 
-    .image-upload img {
-      margin-top: 10px;
-      max-width: 300px;
-      height: auto;
-      border: 1px solid #ccc;
+    .image-upload label {
+      cursor: pointer;
+      display: inline-block;
+      padding: 8px 14px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      margin-bottom: 6px;
     }
 
     input[type="file"] {
       display: none;
     }
 
-    .custom-file-upload {
-      display: inline-block;
-      padding: 8px 14px;
-      background-color: #e0e0e0;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-top: 6px;
+    #uploadedImageBefore,
+    #uploadedImageAfter {
+      margin-top: 10px;
+      max-width: 300px;
     }
 
     .signature-container {
@@ -109,12 +108,15 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      background-color: #4285f4;
-      color: white;
     }
 
     button:hover {
-      opacity: 0.9;
+      opacity: 0.85;
+    }
+
+    #captureArea {
+      padding: 20px;
+      border: 1px solid #ddd;
     }
 
     .star {
@@ -150,19 +152,13 @@
       <div class="image-upload-section">
         <div class="image-upload">
           <label for="before">작업 전</label>
-          <label class="custom-file-upload">
-            <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
-            사진 업로드
-          </label>
+          <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
           <img id="uploadedImageBefore" src="" alt="작업 전">
         </div>
 
         <div class="image-upload">
           <label for="after">작업 후</label>
-          <label class="custom-file-upload">
-            <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
-            사진 업로드
-          </label>
+          <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
           <img id="uploadedImageAfter" src="" alt="작업 후">
         </div>
       </div>
