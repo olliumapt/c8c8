@@ -1,174 +1,209 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>세대민원 보고서</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
-    input[type="file"]::file-selector-button {
-      display: none;
+    * {
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f1f1f1;
+    }
+
+    #report {
+      width: 794px; /* A4 너비 */
+      min-height: 1123px; /* A4 높이 */
+      background: white;
+      padding: 40px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      border: 1px solid #ccc;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin: 10px 0 5px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select {
+      width: 70%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      resize: vertical;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      min-height: 60px;
+    }
+
+    .image-preview {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .image-preview img {
+      width: 100%;
+      max-width: 48%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .signature {
+      margin-top: 20px;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 100%;
+      max-height: 200px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 8px 14px;
+      font-size: 13px;
+      border: none;
+      background: #3498db;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .stars {
+      font-size: 20px;
+      color: gold;
     }
   </style>
 </head>
-<body class="bg-white p-4">
-  <div id="report" class="max-w-3xl mx-auto border border-gray-300 p-6 space-y-4">
-    <h1 class="text-2xl font-bold text-center mb-4">세대민원 보고서</h1>
+<body>
+  <div id="report">
+    <h1>정촌 올리움 세대민원 처리 보고서</h1>
 
-    <div class="flex flex-wrap gap-4">
-      <div class="flex-1">
-        <label class="block font-semibold mb-1">날짜</label>
-        <input type="date" class="w-full border rounded px-2 py-1" />
-      </div>
-      <div class="flex-1">
-        <label class="block font-semibold mb-1">세대 주소</label>
-        <input type="text" placeholder="예: 정촌 올리움 101동 202호" class="w-full border rounded px-2 py-1" />
-      </div>
+    <label for="date">날짜</label>
+    <input type="date" id="date">
+
+    <label for="address">세대 주소</label>
+    <input type="text" id="address">
+
+    <label for="content">민원 내용</label>
+    <textarea id="content"></textarea>
+
+    <label for="result">처리 결과</label>
+    <textarea id="result"></textarea>
+
+    <label for="manager">담당자</label>
+    <select id="manager">
+      <option>김원식</option>
+      <option>최재혁</option>
+      <option>박상우</option>
+    </select>
+
+    <label for="satisfaction">만족도</label>
+    <select id="satisfaction">
+      <option>⭐</option>
+      <option>⭐⭐</option>
+      <option>⭐⭐⭐</option>
+      <option>⭐⭐⭐⭐</option>
+      <option>⭐⭐⭐⭐⭐</option>
+    </select>
+
+    <label>작업 전/후 이미지</label>
+    <div class="image-preview">
+      <input type="file" accept="image/*" onchange="loadImage(event, 'before')">
+      <input type="file" accept="image/*" onchange="loadImage(event, 'after')">
+    </div>
+    <div class="image-preview">
+      <img id="before" alt="작업 전 이미지" />
+      <img id="after" alt="작업 후 이미지" />
     </div>
 
-    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-      <div class="w-full md:w-1/2">
-        <label class="block font-semibold mb-1 text-center">민원 내용</label>
-        <textarea rows="4" class="w-full border rounded px-2 py-1"></textarea>
-      </div>
-      <div class="w-full md:w-1/2">
-        <label class="block font-semibold mb-1 text-center">처리 결과</label>
-        <textarea rows="4" class="w-full border rounded px-2 py-1"></textarea>
-      </div>
-    </div>
-
-    <div class="flex flex-col md:flex-row gap-4">
-      <div class="md:w-1/2 w-full">
-        <label class="block font-semibold mb-1">작업 전 사진</label>
-        <label class="cursor-pointer bg-gray-200 border border-gray-300 px-4 py-2 rounded inline-block text-sm text-gray-700">
-          파일 선택
-          <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImg')" class="hidden">
-        </label>
-        <div id="beforeImg" class="border border-dashed border-gray-400 h-40 flex items-center justify-center overflow-hidden text-gray-400 text-sm mt-2">사진 업로드</div>
-      </div>
-      <div class="md:w-1/2 w-full">
-        <label class="block font-semibold mb-1">작업 후 사진</label>
-        <label class="cursor-pointer bg-gray-200 border border-gray-300 px-4 py-2 rounded inline-block text-sm text-gray-700">
-          파일 선택
-          <input type="file" accept="image/*" onchange="previewImage(event, 'afterImg')" class="hidden">
-        </label>
-        <div id="afterImg" class="border border-dashed border-gray-400 h-40 flex items-center justify-center overflow-hidden text-gray-400 text-sm mt-2">사진 업로드</div>
-      </div>
-    </div>
-
-    <div class="flex flex-wrap gap-4">
-      <div class="flex-1">
-        <label class="block font-semibold mb-1">담당자</label>
-        <select class="w-full border rounded px-2 py-1">
-          <option>김원식</option>
-          <option>최재혁</option>
-          <option>박상우</option>
-        </select>
-      </div>
-      <div class="flex-1">
-        <label class="block font-semibold mb-1">만족도</label>
-        <select class="w-full border rounded px-2 py-1">
-          <option>⭐ 1단계</option>
-          <option>⭐⭐ 2단계</option>
-          <option>⭐⭐⭐ 3단계</option>
-          <option>⭐⭐⭐⭐ 4단계</option>
-          <option>⭐⭐⭐⭐⭐ 5단계</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="text-center">
-      <label class="block font-semibold mb-1">입주자 서명</label>
-      <canvas id="signature" class="border w-full h-40 bg-white touch-none"></canvas>
-      <div class="flex justify-center gap-2 mt-2">
-        <button onclick="clearSignature()" class="bg-red-500 text-white px-4 py-1 rounded">서명 리셋</button>
-        <button onclick="saveAsImage()" class="bg-blue-500 text-white px-4 py-1 rounded">이미지 저장</button>
+    <div class="signature">
+      <label>입주자 서명</label>
+      <canvas id="signature-pad" width="700" height="150"></canvas>
+      <div class="btn-group">
+        <button onclick="clearSignature()">리셋</button>
+        <button onclick="saveImage()">이미지 저장</button>
       </div>
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById("signature");
-    const ctx = canvas.getContext("2d");
-    let isDrawing = false;
+    const canvas = document.getElementById('signature-pad');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
 
-    function getOffset(e) {
-      if (e.touches) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top
-        };
-      } else {
-        return {
-          x: e.offsetX,
-          y: e.offsetY
-        };
-      }
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseout', () => drawing = false);
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
     }
-
-    canvas.addEventListener("mousedown", (e) => {
-      isDrawing = true;
-      const pos = getOffset(e);
-      ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
-    });
-
-    canvas.addEventListener("mousemove", (e) => {
-      if (!isDrawing) return;
-      const pos = getOffset(e);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-    });
-
-    canvas.addEventListener("mouseup", () => isDrawing = false);
-    canvas.addEventListener("mouseout", () => isDrawing = false);
-
-    canvas.addEventListener("touchstart", (e) => {
-      isDrawing = true;
-      const pos = getOffset(e);
-      ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
-    });
-
-    canvas.addEventListener("touchmove", (e) => {
-      if (!isDrawing) return;
-      const pos = getOffset(e);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-      e.preventDefault();
-    });
-
-    canvas.addEventListener("touchend", () => isDrawing = false);
 
     function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
     }
 
-    function previewImage(event, targetId) {
-      const file = event.target.files[0];
-      if (!file) return;
+    function loadImage(event, id) {
       const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        img.classList.add("object-contain", "h-full", "w-full");
-        const container = document.getElementById(targetId);
-        container.innerHTML = "";
-        container.appendChild(img);
-      };
-      reader.readAsDataURL(file);
+      reader.onload = function(){
+        const img = document.getElementById(id);
+        img.src = reader.result;
+      }
+      reader.readAsDataURL(event.target.files[0]);
     }
 
-    function saveAsImage() {
-      html2canvas(document.querySelector("#report")).then((canvas) => {
+    function saveImage() {
+      html2canvas(document.querySelector("#report")).then(canvas => {
         const link = document.createElement("a");
-        link.download = "세대민원보고서.png";
+        link.download = "민원보고서.png";
         link.href = canvas.toDataURL("image/png");
         link.click();
       });
     }
   </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
