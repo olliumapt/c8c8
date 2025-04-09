@@ -6,13 +6,16 @@
   <title>세대민원 보고서</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    input[type="file"]::file-selector-button {
+      display: none;
+    }
+  </style>
 </head>
 <body class="bg-white p-4">
   <div id="report" class="max-w-3xl mx-auto border border-gray-300 p-6 space-y-4">
-    <!-- 제목 -->
     <h1 class="text-2xl font-bold text-center mb-4">세대민원 보고서</h1>
 
-    <!-- 날짜 + 세대 주소 -->
     <div class="flex flex-wrap gap-4">
       <div class="flex-1">
         <label class="block font-semibold mb-1">날짜</label>
@@ -24,7 +27,6 @@
       </div>
     </div>
 
-    <!-- 민원 내용 + 처리 결과 -->
     <div class="flex flex-col md:flex-row justify-center items-center gap-4">
       <div class="w-full md:w-1/2">
         <label class="block font-semibold mb-1 text-center">민원 내용</label>
@@ -36,21 +38,25 @@
       </div>
     </div>
 
-    <!-- 작업 전 / 후 이미지 -->
-    <div class="flex gap-4">
-      <div class="w-1/2">
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="md:w-1/2 w-full">
         <label class="block font-semibold mb-1">작업 전 사진</label>
-        <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImg')" class="mb-2">
-        <div id="beforeImg" class="border border-dashed border-gray-400 h-32 flex items-center justify-center overflow-hidden">사진 업로드</div>
+        <label class="cursor-pointer bg-gray-200 border border-gray-300 px-4 py-2 rounded inline-block text-sm text-gray-700">
+          파일 선택
+          <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImg')" class="hidden">
+        </label>
+        <div id="beforeImg" class="border border-dashed border-gray-400 h-40 flex items-center justify-center overflow-hidden text-gray-400 text-sm mt-2">사진 업로드</div>
       </div>
-      <div class="w-1/2">
+      <div class="md:w-1/2 w-full">
         <label class="block font-semibold mb-1">작업 후 사진</label>
-        <input type="file" accept="image/*" onchange="previewImage(event, 'afterImg')" class="mb-2">
-        <div id="afterImg" class="border border-dashed border-gray-400 h-32 flex items-center justify-center overflow-hidden">사진 업로드</div>
+        <label class="cursor-pointer bg-gray-200 border border-gray-300 px-4 py-2 rounded inline-block text-sm text-gray-700">
+          파일 선택
+          <input type="file" accept="image/*" onchange="previewImage(event, 'afterImg')" class="hidden">
+        </label>
+        <div id="afterImg" class="border border-dashed border-gray-400 h-40 flex items-center justify-center overflow-hidden text-gray-400 text-sm mt-2">사진 업로드</div>
       </div>
     </div>
 
-    <!-- 담당자 / 만족도 -->
     <div class="flex flex-wrap gap-4">
       <div class="flex-1">
         <label class="block font-semibold mb-1">담당자</label>
@@ -72,7 +78,6 @@
       </div>
     </div>
 
-    <!-- 서명 캔버스 -->
     <div class="text-center">
       <label class="block font-semibold mb-1">입주자 서명</label>
       <canvas id="signature" class="border w-full h-40 bg-white touch-none"></canvas>
@@ -84,7 +89,6 @@
   </div>
 
   <script>
-    // 서명 기능
     const canvas = document.getElementById("signature");
     const ctx = canvas.getContext("2d");
     let isDrawing = false;
