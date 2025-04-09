@@ -22,16 +22,24 @@
       margin-bottom: 20px;
     }
 
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     label {
       display: block;
       margin-top: 10px;
       font-weight: bold;
+      text-align: left;
+      width: 60%;
     }
 
     input[type="text"],
     input[type="date"],
-    textarea,
-    select {
+    select,
+    textarea {
       width: 60%;
       padding: 6px;
       margin-top: 4px;
@@ -45,21 +53,27 @@
       height: 80px;
     }
 
-    #uploadedImageBefore,
-    #uploadedImageAfter {
-      margin-top: 10px;
-      max-width: 300px;
-    }
-
-    .image-section {
+    .image-row {
       display: flex;
       justify-content: center;
       gap: 40px;
       margin-top: 10px;
+      width: 100%;
     }
 
-    .image-upload {
+    .image-section {
       text-align: center;
+    }
+
+    .image-section input[type="file"] {
+      display: block;
+      margin: 10px auto;
+    }
+
+    .image-section img {
+      max-width: 150px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
     }
 
     .signature-container {
@@ -70,6 +84,7 @@
     canvas {
       border: 1px solid #ccc;
       margin-top: 10px;
+      background: #fff;
     }
 
     .buttons {
@@ -94,7 +109,6 @@
     #captureArea {
       padding: 20px;
       border: 1px solid #ddd;
-      text-align: center;
     }
   </style>
 </head>
@@ -122,18 +136,27 @@
         <option value="박상우">박상우</option>
       </select>
 
-      <div class="image-section">
-        <div class="image-upload">
-          <label for="beforeImage">작업 전</label>
+      <div class="image-row">
+        <div class="image-section">
+          <label for="beforeImage">작업 전:</label>
           <input type="file" id="beforeImage" name="beforeImage" accept="image/*">
-          <img id="uploadedImageBefore" src="" alt="작업 전 이미지">
+          <img id="beforePreview" src="" alt="작업 전 미리보기">
         </div>
-        <div class="image-upload">
-          <label for="afterImage">작업 후</label>
+        <div class="image-section">
+          <label for="afterImage">작업 후:</label>
           <input type="file" id="afterImage" name="afterImage" accept="image/*">
-          <img id="uploadedImageAfter" src="" alt="작업 후 이미지">
+          <img id="afterPreview" src="" alt="작업 후 미리보기">
         </div>
       </div>
+
+      <label for="satisfaction">만족도 평가:</label>
+      <select id="satisfaction" name="satisfaction">
+        <option value="별 1개">별 1개</option>
+        <option value="별 2개">별 2개</option>
+        <option value="별 3개">별 3개</option>
+        <option value="별 4개">별 4개</option>
+        <option value="별 5개">별 5개</option>
+      </select>
 
       <div class="signature-container">
         <label for="signatureCanvas">입주자 서명:</label>
@@ -152,7 +175,10 @@
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mousedown', () => {
+      drawing = true;
+      ctx.beginPath();
+    });
     canvas.addEventListener('mouseup', () => {
       drawing = false;
       ctx.beginPath();
@@ -166,8 +192,6 @@
       ctx.strokeStyle = '#000';
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
     }
 
     function clearSignature() {
@@ -190,7 +214,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById('uploadedImageBefore').src = e.target.result;
+          document.getElementById('beforePreview').src = e.target.result;
         }
         reader.readAsDataURL(file);
       }
@@ -201,7 +225,7 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-          document.getElementById('uploadedImageAfter').src = e.target.result;
+          document.getElementById('afterPreview').src = e.target.result;
         }
         reader.readAsDataURL(file);
       }
