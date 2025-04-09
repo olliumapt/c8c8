@@ -8,8 +8,8 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      width: 210mm;
-      min-height: 297mm;
+      width: 100%;
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px;
       background: #fff;
@@ -32,15 +32,14 @@
       display: block;
       margin-top: 10px;
       font-weight: bold;
-      text-align: left;
-      width: 60%;
     }
 
     input[type="text"],
     input[type="date"],
     select,
     textarea {
-      width: 60%;
+      width: 100%;
+      max-width: 400px;
       padding: 6px;
       margin-top: 4px;
       border: 1px solid #ccc;
@@ -56,23 +55,20 @@
     .image-row {
       display: flex;
       justify-content: center;
-      gap: 40px;
+      gap: 20px;
       margin-top: 10px;
-      width: 100%;
+      flex-wrap: wrap;
     }
 
-    .image-section {
-      text-align: center;
+    .image-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .image-section input[type="file"] {
-      display: block;
-      margin: 10px auto;
-    }
-
-    .image-section img {
-      max-width: 150px;
-      margin-top: 5px;
+    .image-upload img {
+      margin-top: 10px;
+      max-width: 200px;
       border: 1px solid #ccc;
     }
 
@@ -84,7 +80,7 @@
     canvas {
       border: 1px solid #ccc;
       margin-top: 10px;
-      background: #fff;
+      touch-action: none;
     }
 
     .buttons {
@@ -106,9 +102,16 @@
       opacity: 0.85;
     }
 
-    #captureArea {
-      padding: 20px;
-      border: 1px solid #ddd;
+    .rating-stars {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .rating-stars img {
+      width: 24px;
+      height: 24px;
+      margin: 0 2px;
     }
   </style>
 </head>
@@ -137,25 +140,25 @@
       </select>
 
       <div class="image-row">
-        <div class="image-section">
-          <label for="beforeImage">작업 전:</label>
-          <input type="file" id="beforeImage" name="beforeImage" accept="image/*">
-          <img id="beforePreview" src="" alt="작업 전 미리보기">
+        <div class="image-upload">
+          <label for="beforeImage">작업 전</label>
+          <input type="file" id="beforeImage" accept="image/*">
+          <img id="beforePreview" alt="작업 전">
         </div>
-        <div class="image-section">
-          <label for="afterImage">작업 후:</label>
-          <input type="file" id="afterImage" name="afterImage" accept="image/*">
-          <img id="afterPreview" src="" alt="작업 후 미리보기">
+        <div class="image-upload">
+          <label for="afterImage">작업 후</label>
+          <input type="file" id="afterImage" accept="image/*">
+          <img id="afterPreview" alt="작업 후">
         </div>
       </div>
 
-      <label for="satisfaction">만족도 평가:</label>
-      <select id="satisfaction" name="satisfaction">
-        <option value="별 1개">별 1개</option>
-        <option value="별 2개">별 2개</option>
-        <option value="별 3개">별 3개</option>
-        <option value="별 4개">별 4개</option>
-        <option value="별 5개">별 5개</option>
+      <label for="rating">만족도 평가:</label>
+      <select id="rating" name="rating">
+        <option value="1">★☆☆☆☆</option>
+        <option value="2">★★☆☆☆</option>
+        <option value="3">★★★☆☆</option>
+        <option value="4">★★★★☆</option>
+        <option value="5">★★★★★</option>
       </select>
 
       <div class="signature-container">
@@ -175,15 +178,44 @@
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    canvas.addEventListener('mousedown', () => {
+    function getTouchPos(canvasDom, touchEvent) {
+      const rect = canvasDom.getBoundingClientRect();
+      return {
+        x: touchEvent.touches[0].clientX - rect.left,
+        y: touchEvent.touches[0].clientY - rect.top
+      };
+    }
+
+    canvas.addEventListener('mousedown', (e) => {
       drawing = true;
-      ctx.beginPath();
+      draw(e);
     });
     canvas.addEventListener('mouseup', () => {
       drawing = false;
       ctx.beginPath();
     });
     canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      drawing = true;
+      const pos = getTouchPos(canvas, e);
+      ctx.moveTo(pos.x, pos.y);
+    });
+
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      drawing = false;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      if (!drawing) return;
+      const pos = getTouchPos(canvas, e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    });
 
     function draw(e) {
       if (!drawing) return;
@@ -192,6 +224,8 @@
       ctx.strokeStyle = '#000';
       ctx.lineTo(e.offsetX, e.offsetY);
       ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
     }
 
     function clearSignature() {
