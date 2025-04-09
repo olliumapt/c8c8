@@ -1,154 +1,252 @@
+
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>세대민원 보고서</title>
+  <title>세대 민원 처리 보고서</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    body { font-family: 'Arial', sans-serif; background: #f4f4f4; padding: 20px; }
-    h2 { text-align: center; }
-    .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; }
-    button { margin-top: 20px; padding: 12px 20px; background: #007BFF; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-    button:hover { background: #0056b3; }
-    canvas { border: 1px solid #ccc; display: block; margin-top: 10px; border-radius: 6px; touch-action: none; }
-    .star-rating span { font-size: 24px; color: lightgray; cursor: pointer; }
-    .star-rating .selected { color: gold; }
-    img.preview { max-width: 100%; margin-top: 10px; border-radius: 8px; }
+    body {
+      font-family: "Arial", sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+
+    .images {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+    }
+
+    .images img {
+      max-width: 45%;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+
+    .signature {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    #signature-pad {
+      border: 1px solid #000;
+      width: 300px;
+      height: 150px;
+      touch-action: none;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #fff;
+      color: #000;
+      border: 1px solid #000;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .custom-file-label {
+      display: inline-block;
+      padding: 6px 12px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    select option {
+      font-size: 18px;
+    }
   </style>
 </head>
+
 <body>
-  <div class="container" id="report">
-    <h2>정촌 올리움 세대민원 처리 보고서</h2>
-    <label for="date">날짜</label>
-    <input type="date" id="date">
+  <h1>세대 민원 처리 보고서</h1>
 
-    <label for="address">세대 주소</label>
-    <input type="text" id="address" placeholder="예: 101동 1001호">
-
-    <label for="content">민원 내용</label>
-    <textarea id="content" rows="4" placeholder="민원 내용을 입력하세요"></textarea>
-
-    <label for="result">처리 결과</label>
-    <textarea id="result" rows="3" placeholder="처리 결과를 입력하세요"></textarea>
-
-    <label for="manager">담당자</label>
-    <select id="manager">
-      <option>김원식</option>
-      <option>최재혁</option>
-      <option>박상우</option>
-    </select>
-
-    <label for="satisfaction">만족도 평가</label>
-    <div class="star-rating" id="satisfaction">
-      <span data-value="1">★</span>
-      <span data-value="2">★</span>
-      <span data-value="3">★</span>
-      <span data-value="4">★</span>
-      <span data-value="5">★</span>
+  <div id="report-content">
+    <div class="row">
+      <div class="column">
+        <label for="date">날짜</label>
+        <input type="date" id="date" name="date">
+      </div>
+      <div class="column">
+        <label for="address">세대 주소</label>
+        <input type="text" id="address" name="address">
+      </div>
     </div>
 
-    <label for="signature">입주자 서명</label>
-    <canvas id="signature" width="400" height="200"></canvas>
-    <button onclick="clearCanvas()">서명 지우기</button>
+    <div class="row">
+      <div class="column">
+        <label for="content">민원 내용</label>
+        <textarea id="content" name="content" rows="5"></textarea>
+      </div>
+      <div class="column">
+        <label for="result">처리 결과</label>
+        <textarea id="result" name="result" rows="5"></textarea>
+      </div>
+    </div>
 
-    <label for="photo">사진 첨부</label>
-    <input type="file" id="photo" accept="image/*" onchange="previewImage(event)">
-    <img id="photoPreview" class="preview" style="display:none;">
+    <div class="row">
+      <div class="column">
+        <label for="manager">담당자 이름</label>
+        <select id="manager" name="manager">
+          <option>김원식</option>
+          <option>최재혁</option>
+          <option>박상우</option>
+        </select>
+      </div>
+      <div class="column">
+        <label for="satisfaction">만족도 평가</label>
+        <select id="satisfaction" name="satisfaction">
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="5">⭐⭐⭐⭐⭐</option>
+        </select>
+      </div>
+    </div>
 
-    <button onclick="saveReportAsImage()">저장</button>
+    <div class="images">
+      <div class="column">
+        <label for="before" class="custom-file-label">작업 전 사진</label>
+        <input type="file" id="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
+        <img id="uploadedImageBefore" src="" alt="작업 전 이미지">
+      </div>
+      <div class="column">
+        <label for="after" class="custom-file-label">작업 후 사진</label>
+        <input type="file" id="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
+        <img id="uploadedImageAfter" src="" alt="작업 후 이미지">
+      </div>
+    </div>
+
+    <div class="signature">
+  <label>입주자 서명</label>
+  <canvas id="signature-pad" width="300" height="150"></canvas>
+  <button type="button" onclick="clearSignature()">서명 지우기</button>
+</div>
+
+
+  <div class="buttons">
+    <button onclick="clearSignature()">리셋</button>
+    <button onclick="saveReport()">저장</button>
   </div>
 
   <script>
-    // 별점 평가 시스템
-    const stars = document.querySelectorAll('.star-rating span');
-    let selectedRating = 0;
-    stars.forEach(star => {
-      star.addEventListener('click', () => {
-        selectedRating = star.getAttribute('data-value');
-        updateStars(selectedRating);
-      });
-    });
-    function updateStars(rating) {
-      stars.forEach(star => {
-        star.classList.toggle('selected', star.getAttribute('data-value') <= rating);
-      });
-    }
-
-    // 이미지 미리보기
-    function previewImage(event) {
+    function loadImage(event, imageId) {
       const reader = new FileReader();
-      reader.onload = function() {
-        const img = document.getElementById('photoPreview');
+      reader.onload = function () {
+        const img = document.getElementById(imageId);
         img.src = reader.result;
-        img.style.display = 'block';
       };
       reader.readAsDataURL(event.target.files[0]);
     }
 
-    // 서명 기능
-    const canvas = document.getElementById('signature');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
+   const canvas = document.getElementById('signature-pad');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+let lastX = 0;
+let lastY = 0;
 
-    function getCanvasCoordinates(e) {
-      const rect = canvas.getBoundingClientRect();
-      let x, y;
+function startDrawing(x, y) {
+  drawing = true;
+  [lastX, lastY] = [x, y];
+}
 
-      if (e.touches) {
-        x = e.touches[0].clientX - rect.left;
-        y = e.touches[0].clientY - rect.top;
-      } else {
-        x = e.clientX - rect.left;
-        y = e.clientY - rect.top;
-      }
+function draw(x, y) {
+  if (!drawing) return;
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+  [lastX, lastY] = [x, y];
+}
 
-      return { x, y };
+function stopDrawing() {
+  drawing = false;
+}
+
+canvas.addEventListener('mousedown', e => startDrawing(e.offsetX, e.offsetY));
+canvas.addEventListener('mousemove', e => draw(e.offsetX, e.offsetY));
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
+
+// 모바일 터치 대응
+canvas.addEventListener('touchstart', e => {
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
+});
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches[0];
+  draw(touch.clientX - rect.left, touch.clientY - rect.top);
+});
+canvas.addEventListener('touchend', stopDrawing);
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
     }
 
-    function startDraw(e) {
-      e.preventDefault();
-      drawing = true;
-      const { x, y } = getCanvasCoordinates(e);
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-    }
-
-    function draw(e) {
-      if (!drawing) return;
-      const { x, y } = getCanvasCoordinates(e);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    }
-
-    function stopDraw() {
-      drawing = false;
-    }
-
-    function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    canvas.addEventListener('mousedown', startDraw);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDraw);
-    canvas.addEventListener('mouseout', stopDraw);
-
-    canvas.addEventListener('touchstart', startDraw);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDraw);
-
-    // 이미지로 저장
-    function saveReportAsImage() {
-      html2canvas(document.querySelector("#report")).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'report.png';
+    function saveReport() {
+      html2canvas(document.getElementById("report-content")).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "report.png";
         link.href = canvas.toDataURL();
         link.click();
       });
     }
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
+
 </html>
