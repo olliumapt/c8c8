@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
-
     body {
-      font-family: 'Nanum Gothic', sans-serif;
+      font-family: 'Arial', sans-serif;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
-      padding: 10mm 15mm;
-      background-color: #fff;
-      color: #000;
+      padding: 20px;
+      background: #fff;
       box-sizing: border-box;
     }
 
@@ -24,129 +22,259 @@
       margin-bottom: 20px;
     }
 
-    .form-group {
-      text-align: center;
-      margin-bottom: 12px;
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .form-group label {
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 45%;
+    }
+
+    label {
       font-weight: bold;
-      display: block;
       margin-bottom: 5px;
     }
 
-    .form-group input,
-    .form-group textarea {
-      width: 80%;
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+      width: 100%;
       padding: 6px;
-      font-size: 14px;
       border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
       box-sizing: border-box;
     }
 
-    .form-group textarea {
-      height: 60px;
+    textarea {
       resize: vertical;
+      height: 80px;
     }
 
-    .form-group input[type="file"] {
-      border: none;
+    #uploadedImageBefore,
+    #uploadedImageAfter {
+      margin-top: 10px;
+      max-width: 300px;
     }
 
-    .stars {
+    .image-upload-section {
       display: flex;
       justify-content: center;
-      font-size: 26px;
-      gap: 6px;
+      gap: 40px;
+      margin-top: 20px;
+      flex-wrap: wrap;
     }
 
-    .star {
-      color: #ccc;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .star.selected {
-      color: gold;
-    }
-
-    .signature-group {
+    .image-upload {
       text-align: center;
+    }
+
+    .image-upload label {
+      cursor: pointer;
+      display: inline-block;
+      padding: 8px 14px;
+      background-color: #f0f0f0;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .signature-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       margin-top: 30px;
     }
 
-    .signature-box {
-      margin: 0 auto;
+    canvas {
+      border: 1px solid #ccc;
       margin-top: 10px;
-      width: 300px;
-      height: 100px;
-      border: 1px solid #000;
-      background-color: #f5f5f5;
+      touch-action: none;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 8px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    #captureArea {
+      padding: 20px;
+      border: 1px solid #ddd;
+    }
+
+    .star {
+      color: gold;
+      font-size: 18px;
     }
   </style>
 </head>
+
 <body>
-  <h1>정촌 올리움 세대민원 처리 보고서</h1>
+  <div id="captureArea">
+    <h1>정촌 올리움 세대민원 처리 보고서</h1>
+    <form>
+      <div class="row">
+        <div class="field">
+          <label for="date">날짜:</label>
+          <input type="date" id="date" name="date">
+        </div>
+        <div class="field">
+          <label for="address">세대 주소:</label>
+          <input type="text" id="address" name="address">
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label for="date">날짜</label>
-    <input type="date" id="date">
+      <div class="row">
+        <div class="field">
+          <label for="content">민원 내용:</label>
+          <textarea id="content" name="content"></textarea>
+        </div>
+        <div class="field">
+          <label for="result">처리 결과:</label>
+          <textarea id="result" name="result"></textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="manager">담당자 이름:</label>
+          <select id="manager" name="manager">
+            <option value="김원식">김원식</option>
+            <option value="최재혁">최재혁</option>
+            <option value="박상우">박상우</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="satisfaction">만족도 평가:</label>
+          <select id="satisfaction" name="satisfaction">
+            <option value="1">⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="5">⭐⭐⭐⭐⭐</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="image-upload-section">
+        <div class="image-upload">
+          <label for="before">작업 전</label>
+          <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
+          <img id="uploadedImageBefore" src="" alt="작업 전">
+        </div>
+
+        <div class="image-upload">
+          <label for="after">작업 후</label>
+          <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
+          <img id="uploadedImageAfter" src="" alt="작업 후">
+        </div>
+      </div>
+
+      <div class="signature-container">
+        <label for="signatureCanvas">입주자 서명:</label>
+        <canvas id="signatureCanvas" width="400" height="150"></canvas>
+        <div class="buttons">
+          <button type="button" onclick="clearSignature()">리셋</button>
+          <button type="button" onclick="saveAsImage()">저장</button>
+        </div>
+      </div>
+    </form>
   </div>
 
-  <div class="form-group">
-    <label for="address">세대 주소</label>
-    <input type="text" id="address" placeholder="예: 101동 1001호">
-  </div>
-
-  <div class="form-group">
-    <label for="content">민원 내용</label>
-    <textarea id="content" placeholder="민원 내용을 입력하세요"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label for="result">처리 결과</label>
-    <textarea id="result" placeholder="처리 결과를 입력하세요"></textarea>
-  </div>
-
-  <div class="form-group">
-    <label for="staff">담당자 이름</label>
-    <input type="text" id="staff" placeholder="담당자 이름 입력">
-  </div>
-
-  <div class="form-group">
-    <label for="photo">사진 첨부</label>
-    <input type="file" id="photo" accept="image/*">
-  </div>
-
-  <div class="form-group">
-    <label>만족도 평가</label>
-    <div class="stars" id="stars">
-      <span class="star" data-value="1">★</span>
-      <span class="star" data-value="2">★</span>
-      <span class="star" data-value="3">★</span>
-      <span class="star" data-value="4">★</span>
-      <span class="star" data-value="5">★</span>
-    </div>
-  </div>
-
-  <div class="signature-group">
-    <label>입주자 서명</label>
-    <div class="signature-box"></div>
-  </div>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    const stars = document.querySelectorAll('.star');
-    stars.forEach(star => {
-      star.addEventListener('click', () => {
-        const value = parseInt(star.getAttribute('data-value'));
-        stars.forEach(s => {
-          s.classList.remove('selected');
-          if (parseInt(s.getAttribute('data-value')) <= value) {
-            s.classList.add('selected');
-          }
-        });
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    function startPosition(e) {
+      drawing = true;
+      ctx.beginPath();
+      ctx.moveTo(getX(e), getY(e));
+    }
+
+    function endPosition() {
+      drawing = false;
+      ctx.beginPath();
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      ctx.lineTo(getX(e), getY(e));
+      ctx.stroke();
+    }
+
+    function getX(e) {
+      return e.touches ? e.touches[0].clientX - canvas.getBoundingClientRect().left : e.offsetX;
+    }
+
+    function getY(e) {
+      return e.touches ? e.touches[0].clientY - canvas.getBoundingClientRect().top : e.offsetY;
+    }
+
+    canvas.addEventListener('mousedown', startPosition);
+    canvas.addEventListener('mouseup', endPosition);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchstart', startPosition);
+    canvas.addEventListener('touchend', endPosition);
+    canvas.addEventListener('touchmove', draw);
+
+    function clearSignature() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function saveAsImage() {
+      html2canvas(document.getElementById("captureArea"), {
+        scale: 2
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = '민원처리보고서.png';
+        link.href = canvas.toDataURL("image/png");
+        link.click();
       });
-    });
+    }
+
+    function loadImage(event, targetId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById(targetId).src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
   </script>
 </body>
+
 </html>
