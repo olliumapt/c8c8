@@ -2,165 +2,170 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
     body {
-      font-family: 'Malgun Gothic', sans-serif;
-      margin: 0;
-      padding: 40px;
-      background: #fff;
-    }
-
-    .container {
-      max-width: 800px;
+      font-family: 'Arial', sans-serif;
+      width: 210mm;
+      min-height: 297mm;
       margin: 0 auto;
-      padding: 40px;
-      border: 1px solid #ccc;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      background: #fff;
+      box-sizing: border-box;
     }
 
     h1 {
       text-align: center;
       font-size: 24px;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 10px;
       font-weight: bold;
     }
 
-    input,
+    input[type="text"],
+    input[type="date"],
     textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      box-sizing: border-box;
+      width: 60%;
+      padding: 6px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
       font-size: 14px;
     }
 
-    .photo-row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
+    textarea {
+      resize: vertical;
+      height: 80px;
     }
 
-    .photo-box {
-      width: 48%;
+    #uploadedImage {
+      margin-top: 10px;
+      max-width: 300px;
     }
 
-    canvas {
-      border: 1px solid #000;
-      display: block;
-      margin: 10px auto;
-    }
-
-    .signature-controls {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .signature-controls button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .buttons {
+    .signature-container {
       text-align: center;
       margin-top: 30px;
     }
 
+    canvas {
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
     button {
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 8px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    #captureArea {
+      padding: 20px;
+      border: 1px solid #ddd;
     }
   </style>
 </head>
 
 <body>
-  <div class="container" id="report">
+  <div id="captureArea">
     <h1>정촌 올리움 세대민원 처리 보고서</h1>
     <form>
-      <label for="date">날짜</label>
-      <input type="date" id="date" name="date" />
+      <label for="date">날짜:</label>
+      <input type="date" id="date" name="date">
 
-      <label for="address">세대 주소</label>
-      <input type="text" id="address" name="address" />
+      <label for="address">세대 주소:</label>
+      <input type="text" id="address" name="address">
 
-      <label for="content">민원 내용</label>
-      <textarea id="content" name="content" rows="4"></textarea>
+      <label for="content">민원 내용:</label>
+      <textarea id="content" name="content"></textarea>
 
-      <label for="result">처리 결과</label>
-      <textarea id="result" name="result" rows="4"></textarea>
+      <label for="result">처리 결과:</label>
+      <textarea id="result" name="result"></textarea>
 
-      <label for="manager">담당자 이름</label>
-      <input type="text" id="manager" name="manager" />
+      <label for="manager">담당자 이름:</label>
+      <input type="text" id="manager" name="manager">
 
-      <div class="photo-row">
-        <div class="photo-box">
-          <label for="beforePhoto">작업 전 사진</label>
-          <input type="file" id="beforePhoto" accept="image/*" />
+      <label for="image">사진 첨부:</label>
+      <input type="file" id="image" name="image" accept="image/*">
+      <img id="uploadedImage" src="" alt="첨부 이미지 미리보기">
+
+      <div class="signature-container">
+        <label for="signatureCanvas">입주자 서명:</label>
+        <canvas id="signatureCanvas" width="400" height="150"></canvas>
+        <div class="buttons">
+          <button type="button" onclick="clearSignature()">리셋</button>
+          <button type="button" onclick="saveAsImage()">저장</button>
         </div>
-        <div class="photo-box">
-          <label for="afterPhoto">작업 후 사진</label>
-          <input type="file" id="afterPhoto" accept="image/*" />
-        </div>
-      </div>
-
-      <label>서명</label>
-      <canvas id="signature" width="500" height="200"></canvas>
-      <div class="signature-controls">
-        <button type="button" onclick="clearSignature()">초기화</button>
-        <button type="button" onclick="saveAsImage()">저장</button>
       </div>
     </form>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    const canvas = document.getElementById("signature");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    canvas.addEventListener("mousedown", (e) => {
-      drawing = true;
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!drawing) return;
+      ctx.lineWidth = 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#000';
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(e.offsetX, e.offsetY);
-    });
-
-    canvas.addEventListener("mousemove", (e) => {
-      if (drawing) {
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-      }
-    });
-
-    canvas.addEventListener("mouseup", () => {
-      drawing = false;
-    });
+    }
 
     function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     function saveAsImage() {
-      html2canvas(document.getElementById("report"), {
-        scale: 3
-      }).then(function(canvas) {
-        const link = document.createElement("a");
-        link.download = "report.png";
+      html2canvas(document.getElementById("captureArea"), {
+        scale: 2
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = '민원처리보고서.png';
         link.href = canvas.toDataURL("image/png");
         link.click();
       });
     }
-  </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    document.getElementById('image').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('uploadedImage').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
 </body>
 
 </html>
