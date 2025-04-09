@@ -65,14 +65,26 @@
       margin-top: 30px;
     }
 
-    canvas {
+    #signature-pad {
       border: 1px solid #000;
-      margin: 10px auto;
-      display: block;
+      width: 300px;
+      height: 150px;
+      touch-action: none;
     }
 
-    input[type="file"] {
-      display: none;
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #fff;
+      color: #000;
+      border: 1px solid #000;
+      padding: 10px 20px;
+      cursor: pointer;
     }
 
     .custom-file-label {
@@ -85,20 +97,6 @@
       margin-bottom: 10px;
     }
 
-    .button-row {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .button-row button {
-      padding: 10px 20px;
-      background-color: #fff;
-      color: #000;
-      border: 1px solid #000;
-      cursor: pointer;
-      margin: 0 10px;
-    }
-
     select option {
       font-size: 18px;
     }
@@ -106,9 +104,9 @@
 </head>
 
 <body>
-  <div id="report-content">
-    <h1>세대 민원 처리 보고서</h1>
+  <h1>세대 민원 처리 보고서</h1>
 
+  <div id="report-content">
     <div class="row">
       <div class="column">
         <label for="date">날짜</label>
@@ -135,14 +133,14 @@
       <div class="column">
         <label for="manager">담당자 이름</label>
         <select id="manager" name="manager">
-          <option value="김원식">김원식</option>
-          <option value="최재혁">최재혁</option>
-          <option value="박상우">박상우</option>
+          <option>김원식</option>
+          <option>최재혁</option>
+          <option>박상우</option>
         </select>
       </div>
       <div class="column">
-        <label for="rating">만족도 평가</label>
-        <select id="rating" name="rating">
+        <label for="satisfaction">만족도 평가</label>
+        <select id="satisfaction" name="satisfaction">
           <option value="1">⭐</option>
           <option value="2">⭐⭐</option>
           <option value="3">⭐⭐⭐</option>
@@ -167,20 +165,21 @@
 
     <div class="signature">
       <label>입주자 서명</label>
-      <canvas id="signature-pad" width="300" height="150"></canvas>
+      <canvas id="signature-pad"></canvas>
     </div>
   </div>
 
-  <div class="button-row">
-    <button onclick="resetForm()">리셋</button>
-    <button onclick="saveAsImage()">저장</button>
+  <div class="buttons">
+    <button onclick="clearSignature()">리셋</button>
+    <button onclick="saveReport()">저장</button>
   </div>
 
   <script>
     function loadImage(event, imageId) {
       const reader = new FileReader();
       reader.onload = function () {
-        document.getElementById(imageId).src = reader.result;
+        const img = document.getElementById(imageId);
+        img.src = reader.result;
       };
       reader.readAsDataURL(event.target.files[0]);
     }
@@ -189,39 +188,41 @@
     const ctx = canvas.getContext("2d");
     let drawing = false;
 
-    canvas.addEventListener("mousedown", (e) => {
+    function startDraw(e) {
       drawing = true;
       ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-    });
+      ctx.moveTo(e.offsetX || e.touches[0].clientX - canvas.offsetLeft, e.offsetY || e.touches[0].clientY - canvas.offsetTop);
+    }
 
-    canvas.addEventListener("mousemove", (e) => {
-      if (drawing) {
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-      }
-    });
+    function draw(e) {
+      if (!drawing) return;
+      const x = e.offsetX || e.touches[0].clientX - canvas.offsetLeft;
+      const y = e.offsetY || e.touches[0].clientY - canvas.offsetTop;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
 
-    canvas.addEventListener("mouseup", () => drawing = false);
-    canvas.addEventListener("mouseleave", () => drawing = false);
+    function stopDraw() {
+      drawing = false;
+    }
 
-    function resetForm() {
-      document.getElementById("date").value = "";
-      document.getElementById("address").value = "";
-      document.getElementById("content").value = "";
-      document.getElementById("result").value = "";
-      document.getElementById("manager").selectedIndex = 0;
-      document.getElementById("rating").selectedIndex = 0;
-      document.getElementById("uploadedImageBefore").src = "";
-      document.getElementById("uploadedImageAfter").src = "";
+    canvas.addEventListener("mousedown", startDraw);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDraw);
+    canvas.addEventListener("mouseleave", stopDraw);
+    canvas.addEventListener("touchstart", startDraw);
+    canvas.addEventListener("touchmove", draw);
+    canvas.addEventListener("touchend", stopDraw);
+
+    function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    function saveAsImage() {
+    function saveReport() {
       html2canvas(document.getElementById("report-content")).then(canvas => {
         const link = document.createElement("a");
-        link.download = "민원보고서.png";
-        link.href = canvas.toDataURL("image/png");
+        link.download = "report.png";
+        link.href = canvas.toDataURL();
         link.click();
       });
     }
