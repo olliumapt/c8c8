@@ -22,17 +22,11 @@
       margin-bottom: 20px;
     }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
     label {
-      width: 100%;
-      text-align: center;
-      margin-top: 10px;
+      display: block;
+      margin-top: 20px;
       font-weight: bold;
+      text-align: center;
     }
 
     input[type="text"],
@@ -41,16 +35,23 @@
     select {
       width: 60%;
       padding: 6px;
-      margin: 6px auto 10px auto;
+      margin: 6px auto;
+      display: block;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 14px;
-      display: block;
+      text-align: center;
     }
 
     textarea {
       resize: vertical;
       height: 80px;
+    }
+
+    #uploadedImageBefore,
+    #uploadedImageAfter {
+      margin-top: 10px;
+      max-width: 300px;
     }
 
     .image-upload-section {
@@ -74,35 +75,18 @@
       margin-bottom: 6px;
     }
 
-    input[type="file"] {
-      display: none;
-    }
-
-    #uploadedImageBefore,
-    #uploadedImageAfter {
-      margin-top: 10px;
-      max-width: 300px;
-    }
-
-    select#satisfaction option {
-      color: gold;
-      font-size: 16px;
-    }
-
     .signature-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 30px;
-    }
-
-    .signature-container label {
-      margin-bottom: 10px;
+      text-align: center;
+      margin-top: 40px;
     }
 
     canvas {
       border: 1px solid #ccc;
+      margin-top: 10px;
       touch-action: none;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .buttons {
@@ -128,6 +112,19 @@
       padding: 20px;
       border: 1px solid #ddd;
     }
+
+    .stars {
+      text-align: center;
+      font-size: 30px;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .stars span.selected,
+    .stars span:hover,
+    .stars span:hover ~ span {
+      color: gold;
+    }
   </style>
 </head>
 
@@ -136,10 +133,10 @@
     <h1>정촌 올리움 세대민원 처리 보고서</h1>
     <form>
       <label for="date">날짜:</label>
-      <input type="date" id="date" name="date">
+      <input type="date" id="date" name="date" />
 
       <label for="address">세대 주소:</label>
-      <input type="text" id="address" name="address">
+      <input type="text" id="address" name="address" />
 
       <label for="content">민원 내용:</label>
       <textarea id="content" name="content"></textarea>
@@ -157,25 +154,28 @@
       <div class="image-upload-section">
         <div class="image-upload">
           <label for="before">작업 전</label>
-          <input type="file" id="before" name="before" accept="image/*" onchange="loadImage(event, 'uploadedImageBefore')">
-          <img id="uploadedImageBefore" src="" alt="작업 전">
+          <input type="file" id="before" name="before" accept="image/*"
+            onchange="loadImage(event, 'uploadedImageBefore')" />
+          <img id="uploadedImageBefore" src="" alt="작업 전" />
         </div>
 
         <div class="image-upload">
           <label for="after">작업 후</label>
-          <input type="file" id="after" name="after" accept="image/*" onchange="loadImage(event, 'uploadedImageAfter')">
-          <img id="uploadedImageAfter" src="" alt="작업 후">
+          <input type="file" id="after" name="after" accept="image/*"
+            onchange="loadImage(event, 'uploadedImageAfter')" />
+          <img id="uploadedImageAfter" src="" alt="작업 후" />
         </div>
       </div>
 
-      <label for="satisfaction">만족도 평가:</label>
-      <select id="satisfaction" name="satisfaction">
-        <option value="1">★</option>
-        <option value="2">★★</option>
-        <option value="3">★★★</option>
-        <option value="4">★★★★</option>
-        <option value="5">★★★★★</option>
-      </select>
+      <label>만족도 평가:</label>
+      <div id="satisfaction" class="stars">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
+      <input type="hidden" id="satisfactionValue" name="satisfaction" />
 
       <div class="signature-container">
         <label for="signatureCanvas">입주자 서명:</label>
@@ -190,6 +190,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // 서명 관련
     const canvas = document.getElementById('signatureCanvas');
     const ctx = canvas.getContext('2d');
     let drawing = false;
@@ -254,6 +255,20 @@
         reader.readAsDataURL(file);
       }
     }
+
+    // 별점 관련
+    const stars = document.querySelectorAll('.stars span');
+    const satisfactionInput = document.getElementById('satisfactionValue');
+
+    stars.forEach((star, index) => {
+      star.addEventListener('click', () => {
+        satisfactionInput.value = star.dataset.value;
+        stars.forEach(s => s.classList.remove('selected'));
+        for (let i = 0; i <= index; i++) {
+          stars[i].classList.add('selected');
+        }
+      });
+    });
   </script>
 </body>
 
