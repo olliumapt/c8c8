@@ -25,13 +25,13 @@
     </div>
 
     <!-- 민원 내용 + 처리 결과 -->
-    <div class="flex flex-wrap gap-4">
+    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
       <div class="w-full md:w-1/2">
-        <label class="block font-semibold mb-1">민원 내용</label>
+        <label class="block font-semibold mb-1 text-center">민원 내용</label>
         <textarea rows="4" class="w-full border rounded px-2 py-1"></textarea>
       </div>
       <div class="w-full md:w-1/2">
-        <label class="block font-semibold mb-1">처리 결과</label>
+        <label class="block font-semibold mb-1 text-center">처리 결과</label>
         <textarea rows="4" class="w-full border rounded px-2 py-1"></textarea>
       </div>
     </div>
@@ -40,11 +40,13 @@
     <div class="flex gap-4">
       <div class="w-1/2">
         <label class="block font-semibold mb-1">작업 전 사진</label>
-        <div class="border border-dashed border-gray-400 h-32 flex items-center justify-center">사진 업로드</div>
+        <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImg')" class="mb-2">
+        <div id="beforeImg" class="border border-dashed border-gray-400 h-32 flex items-center justify-center overflow-hidden">사진 업로드</div>
       </div>
       <div class="w-1/2">
         <label class="block font-semibold mb-1">작업 후 사진</label>
-        <div class="border border-dashed border-gray-400 h-32 flex items-center justify-center">사진 업로드</div>
+        <input type="file" accept="image/*" onchange="previewImage(event, 'afterImg')" class="mb-2">
+        <div id="afterImg" class="border border-dashed border-gray-400 h-32 flex items-center justify-center overflow-hidden">사진 업로드</div>
       </div>
     </div>
 
@@ -71,10 +73,10 @@
     </div>
 
     <!-- 서명 캔버스 -->
-    <div>
+    <div class="text-center">
       <label class="block font-semibold mb-1">입주자 서명</label>
-      <canvas id="signature" class="border w-full h-40 bg-white"></canvas>
-      <div class="flex gap-2 mt-2">
+      <canvas id="signature" class="border w-full h-40 bg-white touch-none"></canvas>
+      <div class="flex justify-center gap-2 mt-2">
         <button onclick="clearSignature()" class="bg-red-500 text-white px-4 py-1 rounded">서명 리셋</button>
         <button onclick="saveAsImage()" class="bg-blue-500 text-white px-4 py-1 rounded">이미지 저장</button>
       </div>
@@ -82,35 +84,84 @@
   </div>
 
   <script>
+    // 서명 기능
     const canvas = document.getElementById("signature");
     const ctx = canvas.getContext("2d");
     let isDrawing = false;
 
+    function getOffset(e) {
+      if (e.touches) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: e.touches[0].clientX - rect.left,
+          y: e.touches[0].clientY - rect.top
+        };
+      } else {
+        return {
+          x: e.offsetX,
+          y: e.offsetY
+        };
+      }
+    }
+
     canvas.addEventListener("mousedown", (e) => {
       isDrawing = true;
+      const pos = getOffset(e);
       ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
+      ctx.moveTo(pos.x, pos.y);
     });
 
     canvas.addEventListener("mousemove", (e) => {
-      if (isDrawing) {
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.stroke();
-      }
+      if (!isDrawing) return;
+      const pos = getOffset(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
     });
 
-    canvas.addEventListener("mouseup", () => (isDrawing = false));
-    canvas.addEventListener("mouseout", () => (isDrawing = false));
+    canvas.addEventListener("mouseup", () => isDrawing = false);
+    canvas.addEventListener("mouseout", () => isDrawing = false);
+
+    canvas.addEventListener("touchstart", (e) => {
+      isDrawing = true;
+      const pos = getOffset(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    });
+
+    canvas.addEventListener("touchmove", (e) => {
+      if (!isDrawing) return;
+      const pos = getOffset(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      e.preventDefault();
+    });
+
+    canvas.addEventListener("touchend", () => isDrawing = false);
 
     function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function previewImage(event, targetId) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.classList.add("object-contain", "h-full", "w-full");
+        const container = document.getElementById(targetId);
+        container.innerHTML = "";
+        container.appendChild(img);
+      };
+      reader.readAsDataURL(file);
     }
 
     function saveAsImage() {
       html2canvas(document.querySelector("#report")).then((canvas) => {
         const link = document.createElement("a");
         link.download = "세대민원보고서.png";
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL("image/png");
         link.click();
       });
     }
