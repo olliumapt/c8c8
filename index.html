@@ -2,8 +2,8 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
     body {
@@ -84,14 +84,24 @@
       max-width: 300px;
     }
 
+    select#satisfaction option {
+      color: gold;
+      font-size: 16px;
+    }
+
     .signature-container {
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       margin-top: 30px;
+    }
+
+    .signature-container label {
+      margin-bottom: 10px;
     }
 
     canvas {
       border: 1px solid #ccc;
-      margin-top: 10px;
       touch-action: none;
     }
 
@@ -117,11 +127,6 @@
     #captureArea {
       padding: 20px;
       border: 1px solid #ddd;
-    }
-
-    .star {
-      color: gold;
-      font-size: 18px;
     }
   </style>
 </head>
