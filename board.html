@@ -2,54 +2,88 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>민원 보고서 게시판</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>민원 게시판</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-    th { background: #eee; }
-    img { max-width: 100px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .report {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .images {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .images img {
+      width: 150px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .signature {
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>민원 보고서 게시판</h2>
-  <table id="reportTable">
-    <thead>
-      <tr>
-        <th>날짜</th>
-        <th>세대 주소</th>
-        <th>민원 내용</th>
-        <th>처리 결과</th>
-        <th>담당자</th>
-        <th>만족도</th>
-        <th>작업 전</th>
-        <th>작업 후</th>
-        <th>서명</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <h1>📋 민원 게시판</h1>
+  <div id="reportList"></div>
 
-  <script>
-    const reports = JSON.parse(localStorage.getItem("reports") || "[]");
-    const tbody = document.querySelector("#reportTable tbody");
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    reports.forEach(report => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${report.workDate}</td>
-        <td>${report.address}</td>
-        <td>${report.complaint}</td>
-        <td>${report.result}</td>
-        <td>${report.worker}</td>
-        <td>${report.satisfaction}</td>
-        <td><img src="${report.beforeImage}" /></td>
-        <td><img src="${report.afterImage}" /></td>
-        <td><img src="${report.signature}" /></td>
-      `;
-      tbody.appendChild(row);
-    });
+    const firebaseConfig = {
+      apiKey: "AIzaSyCufJnLmO2biBaDoSvtCAu8WGzRX-cEPgE",
+      authDomain: "ollium-a6e5d.firebaseapp.com",
+      projectId: "ollium-a6e5d",
+      storageBucket: "ollium-a6e5d.appspot.com",
+      messagingSenderId: "706733940523",
+      appId: "1:706733940523:web:568a71971524e8c3cfaf6e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const reportList = document.getElementById("reportList");
+
+    async function loadReports() {
+      const querySnapshot = await getDocs(collection(db, "reports"));
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const reportDiv = document.createElement("div");
+        reportDiv.className = "report";
+        reportDiv.innerHTML = `
+          <p><strong>📅 날짜:</strong> ${data.workDate}</p>
+          <p><strong>🏠 세대주소:</strong> ${data.address}</p>
+          <p><strong>📝 민원내용:</strong> ${data.complaint}</p>
+          <p><strong>✅ 처리결과:</strong> ${data.result}</p>
+          <p><strong>👷 작업자:</strong> ${data.worker}</p>
+          <p><strong>⭐ 만족도:</strong> ${data.satisfaction}</p>
+          <div class="images">
+            <div><strong>작업 전</strong><br/><img src="${data.beforeImage}" alt="작업 전 이미지" /></div>
+            <div><strong>작업 후</strong><br/><img src="${data.afterImage}" alt="작업 후 이미지" /></div>
+          </div>
+          <div class="signature"><strong>입주자 서명:</strong><br/><img src="${data.signature}" alt="서명 이미지" width="200" /></div>
+        `;
+        reportList.appendChild(reportDiv);
+      });
+    }
+
+    loadReports();
   </script>
 </body>
 </html>
