@@ -1,7 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
   const canvas = document.getElementById("signature-pad");
   const ctx = canvas.getContext("2d");
+
+  // ✅ 캔버스 사이즈 맞춤
+  function resizeCanvasToDisplaySize(canvas) {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  }
+  resizeCanvasToDisplaySize(canvas);
+
   let drawing = false;
+  // 이하 생략...
+
 
   // 위치 계산 함수
   function getPosition(e) {
