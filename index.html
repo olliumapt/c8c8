@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>세대 민원처리 보고서</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .thumbnail { width: 100px; height: auto; margin-top: 10px; }
+    .report-form { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; }
+    .report-form label { margin-top: 10px; display: block; font-weight: bold; }
+    .report-form input, .report-form select, .report-form textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    .images { display: flex; gap: 20px; }
+    .column { flex: 1; }
+    .signature-pad { border: 1px solid #ccc; margin-top: 10px; }
+    .signature-actions { margin-top: 10px; }
+    button { padding: 10px 20px; margin-top: 20px; }
+  </style>
 </head>
 <body>
   <form class="report-form" id="reportForm">
@@ -43,27 +54,26 @@
     <div class="images">
       <div class="column">
         <label>작업 전 이미지:</label>
-        <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImage')" />
-        <img id="beforeImage" class="thumbnail" src="" />
+        <input type="file" id="beforeUpload" accept="image/*" />
+        <img id="beforeImage" class="thumbnail" />
       </div>
       <div class="column">
         <label>작업 후 이미지:</label>
-        <input type="file" accept="image/*" onchange="previewImage(event, 'afterImage')" />
-        <img id="afterImage" class="thumbnail" src="" />
+        <input type="file" id="afterUpload" accept="image/*" />
+        <img id="afterImage" class="thumbnail" />
       </div>
     </div>
 
     <label>입주자 서명:</label>
-    <canvas id="signature" class="signature-pad" width="300" height="150" style="border:1px solid #ccc;"></canvas>
+    <canvas id="signature-pad" width="300" height="150" class="signature-pad"></canvas>
     <div class="signature-actions">
-      <button type="button" onclick="clearSignature()">서명 리셋</button>
+      <button type="button" id="reset-signature">서명 리셋</button>
     </div>
 
     <button type="button" onclick="saveReport()">보고서 저장</button>
     <a href="board.html" style="text-align:center; display:block; margin-top:20px;">📋 게시판 보기</a>
   </form>
 
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
