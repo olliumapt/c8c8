@@ -4,17 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>세대 민원처리 보고서</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <style>
-    .thumbnail { width: 100px; height: auto; margin-top: 10px; }
-    .report-form { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; }
-    .report-form label { margin-top: 10px; display: block; font-weight: bold; }
-    .report-form input, .report-form select, .report-form textarea { width: 100%; padding: 8px; margin-top: 5px; }
-    .images { display: flex; gap: 20px; }
-    .column { flex: 1; }
-    .signature-pad { border: 1px solid #ccc; margin-top: 10px; }
-    .signature-actions { margin-top: 10px; }
-    button { padding: 10px 20px; margin-top: 20px; }
+    canvas {
+      border: 1px solid #ccc;
+      width: 100%;
+      height: 200px;
+      touch-action: none; /* 모바일 터치 인식 핵심 */
+    }
   </style>
 </head>
 <body>
@@ -55,25 +52,26 @@
       <div class="column">
         <label>작업 전 이미지:</label>
         <input type="file" id="beforeUpload" accept="image/*" />
-        <img id="beforeImage" class="thumbnail" />
+        <img id="beforeImage" class="thumbnail" src="" />
       </div>
       <div class="column">
         <label>작업 후 이미지:</label>
         <input type="file" id="afterUpload" accept="image/*" />
-        <img id="afterImage" class="thumbnail" />
+        <img id="afterImage" class="thumbnail" src="" />
       </div>
     </div>
 
     <label>입주자 서명:</label>
-    <canvas id="signature-pad" width="300" height="150" style="border:1px solid #ccc; touch-action: none;"></canvas>
+    <canvas id="signature-pad"></canvas>
     <div class="signature-actions">
-      <button type="button" id="reset-signature">서명 리셋</button>
+      <button type="button" onclick="clearSignature()">서명 리셋</button>
     </div>
 
     <button type="button" onclick="saveReport()">보고서 저장</button>
-    <a href="board.html" style="text-align:center; display:block; margin-top:20px;">📋 게시판 보기</a>
+    <a href="board.html" style="text-align:center; display:block; margin-bottom:20px;">📋 게시판 보기</a>
   </form>
 
-  <script src="script.js" defer></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
