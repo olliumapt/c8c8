@@ -1,146 +1,235 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>민원 처리 보고서</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>정촌 올리움 세대민원 처리 보고서</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      max-width: 800px;
       margin: 0 auto;
+      max-width: 800px;
       padding: 20px;
+      background-color: #f9f9f9;
     }
-    .mb-4 {
-      margin-bottom: 1.5rem;
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
     }
     label {
+      display: block;
+      margin-bottom: 5px;
       font-weight: bold;
     }
-    img.preview {
-      max-width: 150px;
-      display: none;
-      margin-top: 5px;
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .image-preview {
+      max-width: 150px;
+      margin-top: 5px;
+      display: none;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .star {
+      color: gold;
+      font-size: 18px;
     }
     canvas {
       border: 1px solid #999;
       border-radius: 4px;
+      width: 100%;
+      max-width: 300px;
     }
     button {
-      margin-top: 5px;
+      margin-top: 10px;
       margin-right: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .mb-4 {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
 
-  <h2>민원 처리 보고서</h2>
+  <h2>세대민원 처리 보고서</h2>
 
-  <!-- 작업 전 사진 -->
   <div class="mb-4">
-    <label for="beforeUpload">작업 전 사진:</label><br />
-    <input type="file" id="beforeUpload" accept="image/*" />
-    <img id="beforePreview" class="preview" alt="작업 전 미리보기" />
+    <label for="workDate">작업 날짜</label>
+    <input type="date" id="workDate" />
   </div>
 
-  <!-- 작업 후 사진 -->
   <div class="mb-4">
-    <label for="afterUpload">작업 후 사진:</label><br />
-    <input type="file" id="afterUpload" accept="image/*" />
-    <img id="afterPreview" class="preview" alt="작업 후 미리보기" />
+    <label for="address">세대 주소</label>
+    <input type="text" id="address" placeholder="예: 101동 1001호" />
   </div>
 
-  <!-- 서명 패드 -->
   <div class="mb-4">
-    <label for="signaturePad">입주자 서명:</label><br />
-    <canvas id="signaturePad" width="300" height="150"></canvas><br />
-    <button id="captureSignatureBtn">서명 저장</button>
-    <button id="resetSignatureBtn">서명 리셋</button><br />
-    <img id="signatureImage" class="preview" alt="서명 이미지" />
+    <label for="complaint">민원 내용</label>
+    <textarea id="complaint" placeholder="민원 내용을 입력하세요."></textarea>
+  </div>
+
+  <div class="mb-4">
+    <label for="result">처리 결과</label>
+    <textarea id="result" placeholder="처리 결과를 입력하세요."></textarea>
+  </div>
+
+  <div class="mb-4">
+    <label for="worker">담당자</label>
+    <select id="worker">
+      <option value="">담당자를 선택하세요</option>
+      <option value="김원식">김원식</option>
+      <option value="최재혁">최재혁</option>
+      <option value="박상우">박상우</option>
+    </select>
+  </div>
+
+  <div class="mb-4">
+    <label for="satisfaction">만족도</label>
+    <select id="satisfaction" onchange="updateStars()">
+      <option value="">선택</option>
+      <option value="1">1점</option>
+      <option value="2">2점</option>
+      <option value="3">3점</option>
+      <option value="4">4점</option>
+      <option value="5">5점</option>
+    </select>
+    <div id="stars"></div>
+  </div>
+
+  <div class="mb-4">
+    <label for="beforeUpload">작업 전 사진</label>
+    <input type="file" id="beforeUpload" accept="image/*">
+    <img id="beforePreview" class="image-preview" />
+  </div>
+
+  <div class="mb-4">
+    <label for="afterUpload">작업 후 사진</label>
+    <input type="file" id="afterUpload" accept="image/*">
+    <img id="afterPreview" class="image-preview" />
+  </div>
+
+  <div class="mb-4">
+    <label>입주자 서명</label>
+    <canvas id="signaturePad" width="300" height="150"></canvas><br/>
+    <button id="saveSignatureBtn">서명 저장</button>
+    <button id="resetSignatureBtn">서명 리셋</button><br/>
+    <img id="signatureImage" class="image-preview" />
   </div>
 
   <script>
+    // 별점 표시
+    function updateStars() {
+      const value = parseInt(document.getElementById("satisfaction").value);
+      const stars = document.getElementById("stars");
+      stars.innerHTML = "";
+      for (let i = 1; i <= 5; i++) {
+        stars.innerHTML += i <= value ? '⭐' : '☆';
+      }
+    }
+
     // 이미지 미리보기
-    function setupImagePreview(inputId, previewId) {
-      document.getElementById(inputId).addEventListener('change', function (e) {
+    function setupPreview(inputId, previewId) {
+      document.getElementById(inputId).addEventListener("change", function (e) {
         const reader = new FileReader();
         reader.onload = function (event) {
           const img = document.getElementById(previewId);
           img.src = event.target.result;
-          img.style.display = 'block';
+          img.style.display = "block";
         };
         reader.readAsDataURL(e.target.files[0]);
       });
     }
-
-    setupImagePreview('beforeUpload', 'beforePreview');
-    setupImagePreview('afterUpload', 'afterPreview');
+    setupPreview("beforeUpload", "beforePreview");
+    setupPreview("afterUpload", "afterPreview");
 
     // 서명 패드
     const canvas = document.getElementById("signaturePad");
     const ctx = canvas.getContext("2d");
     let drawing = false;
 
-    canvas.addEventListener("mousedown", () => drawing = true);
-    canvas.addEventListener("mouseup", () => {
-      drawing = false;
-      ctx.beginPath();
-    });
-    canvas.addEventListener("mousemove", draw);
+    function getMousePos(canvas, evt) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
 
+    canvas.addEventListener("mousedown", (e) => {
+      drawing = true;
+      const pos = getMousePos(canvas, e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (!drawing) return;
+      const pos = getMousePos(canvas, e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    });
+
+    canvas.addEventListener("mouseup", () => drawing = false);
+    canvas.addEventListener("mouseleave", () => drawing = false);
+
+    // 터치 지원
     canvas.addEventListener("touchstart", (e) => {
       e.preventDefault();
       drawing = true;
-    });
-    canvas.addEventListener("touchend", () => {
-      drawing = false;
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
       ctx.beginPath();
+      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
     });
+
     canvas.addEventListener("touchmove", (e) => {
       e.preventDefault();
+      if (!drawing) return;
       const touch = e.touches[0];
-      drawTouch(touch.clientX, touch.clientY);
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      ctx.stroke();
     });
 
-    function draw(e) {
-      if (!drawing) return;
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineWidth = 2;
-      ctx.lineCap = "round";
-      ctx.strokeStyle = "#000";
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    }
-
-    function drawTouch(x, y) {
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineWidth = 2;
-      ctx.lineCap = "round";
-      ctx.strokeStyle = "#000";
-      ctx.lineTo(x - rect.left, y - rect.top);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(x - rect.left, y - rect.top);
-    }
+    canvas.addEventListener("touchend", () => drawing = false);
 
     // 서명 저장
-    document.getElementById("captureSignatureBtn").addEventListener("click", () => {
+    document.getElementById("saveSignatureBtn").addEventListener("click", () => {
       const image = canvas.toDataURL("image/png");
-      const signatureImage = document.getElementById("signatureImage");
-      signatureImage.src = image;
-      signatureImage.style.display = "block";
+      const sigImg = document.getElementById("signatureImage");
+      sigImg.src = image;
+      sigImg.style.display = "block";
     });
 
     // 서명 리셋
     document.getElementById("resetSignatureBtn").addEventListener("click", () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const signatureImage = document.getElementById("signatureImage");
-      signatureImage.src = "";
-      signatureImage.style.display = "none";
+      const sigImg = document.getElementById("signatureImage");
+      sigImg.src = "";
+      sigImg.style.display = "none";
     });
   </script>
 </body>
