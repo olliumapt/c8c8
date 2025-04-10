@@ -1,3 +1,46 @@
+// 서명 패드 초기화
+const canvas = document.getElementById("signature-pad");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+canvas.addEventListener("mousedown", (e) => {
+  drawing = true;
+  ctx.beginPath();
+  ctx.moveTo(e.offsetX, e.offsetY);
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (!drawing) return;
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+});
+
+canvas.addEventListener("mouseup", () => {
+  drawing = false;
+});
+
+document.getElementById("reset-signature").addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+// 작업 전/후 이미지 미리보기
+document.getElementById("beforeUpload").addEventListener("change", function () {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    document.getElementById("beforeImage").src = e.target.result;
+  };
+  reader.readAsDataURL(this.files[0]);
+});
+
+document.getElementById("afterUpload").addEventListener("change", function () {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    document.getElementById("afterImage").src = e.target.result;
+  };
+  reader.readAsDataURL(this.files[0]);
+});
+
+// 보고서 저장
 function saveReport() {
   const report = {
     workDate: document.getElementById("workDate").value,
@@ -16,4 +59,5 @@ function saveReport() {
   localStorage.setItem("reports", JSON.stringify(savedReports));
 
   alert("보고서가 저장되었습니다! 게시판에서 확인하세요.");
+  window.location.href = "board.html"; // 저장 후 게시판으로 이동
 }
