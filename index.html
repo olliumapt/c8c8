@@ -109,15 +109,20 @@
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <label>작업 전 사진</label>
+  <!-- 작업 전 사진 -->
+<div class="mb-4">
+  <label for="beforeUpload">작업 전 사진:</label><br />
   <input type="file" id="beforeUpload" accept="image/*" />
-  <label>작업 후 사진</label>
-  <input type="file" id="afterUpload" accept="image/*" />
+  <img id="beforeImage" src="" alt="작업 전 미리보기" style="max-width: 120px; display: none; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;" />
+</div>
 
-  <div class="image-preview">
-    <img id="beforeImage" src="" alt="작업 전 이미지" />
-    <img id="afterImage" src="" alt="작업 후 이미지" />
-  </div>
+<!-- 작업 후 사진 -->
+<div class="mb-4">
+  <label for="afterUpload">작업 후 사진:</label><br />
+  <input type="file" id="afterUpload" accept="image/*" />
+  <img id="afterImage" src="" alt="작업 후 미리보기" style="max-width: 120px; display: none; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px;" />
+</div>
+
 
   <label>입주자 서명</label>
   <canvas id="signature-pad"></canvas>
