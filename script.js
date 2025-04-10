@@ -1,48 +1,45 @@
-// 서명 패드 초기화
-const canvas = document.getElementById("signature-pad");
-const ctx = canvas.getContext("2d");
+// 이미지 미리보기
+function previewImage(event, targetId) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = document.getElementById(targetId);
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// 서명 패드
+const canvas = document.getElementById('signature');
+const ctx = canvas.getContext('2d');
 let drawing = false;
 
-canvas.addEventListener("mousedown", (e) => {
+canvas.width = 300;
+canvas.height = 150;
+
+canvas.addEventListener('mousedown', e => {
   drawing = true;
   ctx.beginPath();
   ctx.moveTo(e.offsetX, e.offsetY);
 });
-
-canvas.addEventListener("mousemove", (e) => {
-  if (!drawing) return;
-  ctx.lineTo(e.offsetX, e.offsetY);
-  ctx.stroke();
+canvas.addEventListener('mousemove', e => {
+  if (drawing) {
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+  }
 });
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseleave', () => drawing = false);
 
-canvas.addEventListener("mouseup", () => {
-  drawing = false;
-});
-
-document.getElementById("reset-signature").addEventListener("click", () => {
+function clearSignature() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-});
+}
 
-// 작업 전/후 이미지 미리보기
-document.getElementById("beforeUpload").addEventListener("change", function () {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    document.getElementById("beforeImage").src = e.target.result;
-  };
-  reader.readAsDataURL(this.files[0]);
-});
-
-document.getElementById("afterUpload").addEventListener("change", function () {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    document.getElementById("afterImage").src = e.target.result;
-  };
-  reader.readAsDataURL(this.files[0]);
-});
-
-// 보고서 저장
+// 보고서 저장 + 게시판 이동
 function saveReport() {
-  const report = {
+  const data = {
     workDate: document.getElementById("workDate").value,
     address: document.getElementById("address").value,
     complaint: document.getElementById("complaint").value,
@@ -54,10 +51,10 @@ function saveReport() {
     signature: canvas.toDataURL()
   };
 
-  const savedReports = JSON.parse(localStorage.getItem("reports") || "[]");
-  savedReports.push(report);
-  localStorage.setItem("reports", JSON.stringify(savedReports));
+  let reports = JSON.parse(localStorage.getItem("reports") || "[]");
+  reports.push(data);
+  localStorage.setItem("reports", JSON.stringify(reports));
 
-  alert("보고서가 저장되었습니다! 게시판에서 확인하세요.");
-  window.location.href = "board.html"; // 저장 후 게시판으로 이동
+  // 게시판 페이지로 이동
+  window.location.href = "board.html";
 }
