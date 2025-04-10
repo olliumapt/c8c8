@@ -3,75 +3,107 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>세대 민원처리 보고서</title>
-  <link rel="stylesheet" href="style.css">
+  <title>민원 보고서 작성</title>
   <style>
-    canvas {
+    body {
+      font-family: sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    .image-preview {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .image-preview img {
+      width: 150px;
+      height: auto;
       border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    canvas {
+      border: 1px solid #333;
+      margin-top: 10px;
       width: 100%;
       height: 200px;
-      touch-action: none; /* 모바일 터치 인식 핵심 */
+      touch-action: none;
+    }
+    .button-group {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <form class="report-form" id="reportForm">
-    <h2 style="text-align: center;">세대 민원처리 보고서</h2>
+  <h1>정촌 올리움 세대민원 처리 보고서</h1>
 
-    <label>작업 날짜:</label>
-    <input type="date" id="workDate" />
+  <label for="workDate">작업 날짜</label>
+  <input type="date" id="workDate" />
 
-    <label>세대 주소:</label>
-    <input type="text" id="address" />
+  <label for="address">세대 주소</label>
+  <input type="text" id="address" placeholder="예: 101동 1001호" />
 
-    <label>민원 내용:</label>
-    <textarea id="complaint"></textarea>
+  <label for="complaint">민원 내용</label>
+  <textarea id="complaint" rows="3"></textarea>
 
-    <label>처리 결과:</label>
-    <textarea id="result"></textarea>
+  <label for="result">처리 결과</label>
+  <textarea id="result" rows="3"></textarea>
 
-    <label>담당자:</label>
-    <select id="worker">
-      <option value="">선택</option>
-      <option value="김원식">김원식</option>
-      <option value="최재혁">최재혁</option>
-      <option value="박상우">박상우</option>
-    </select>
+  <label for="worker">담당자</label>
+  <select id="worker">
+    <option value="김원식">김원식</option>
+    <option value="최재혁">최재혁</option>
+    <option value="박상우">박상우</option>
+  </select>
 
-    <label>만족도:</label>
-    <select id="satisfaction">
-      <option value="">선택</option>
-      <option value="1">⭐</option>
-      <option value="2">⭐⭐</option>
-      <option value="3">⭐⭐⭐</option>
-      <option value="4">⭐⭐⭐⭐</option>
-      <option value="5">⭐⭐⭐⭐⭐</option>
-    </select>
+  <label for="satisfaction">만족도</label>
+  <select id="satisfaction">
+    <option value="5">★★★★★</option>
+    <option value="4">★★★★</option>
+    <option value="3">★★★</option>
+    <option value="2">★★</option>
+    <option value="1">★</option>
+  </select>
 
-    <div class="images">
-      <div class="column">
-        <label>작업 전 이미지:</label>
-        <input type="file" id="beforeUpload" accept="image/*" />
-        <img id="beforeImage" class="thumbnail" src="" />
-      </div>
-      <div class="column">
-        <label>작업 후 이미지:</label>
-        <input type="file" id="afterUpload" accept="image/*" />
-        <img id="afterImage" class="thumbnail" src="" />
-      </div>
-    </div>
+  <label>작업 전 사진</label>
+  <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImage')" />
+  <div class="image-preview">
+    <img id="beforeImage" src="" alt="작업 전 이미지" />
+  </div>
 
-    <label>입주자 서명:</label>
-    <canvas id="signature-pad"></canvas>
-    <div class="signature-actions">
-      <button type="button" onclick="clearSignature()">서명 리셋</button>
-    </div>
+  <label>작업 후 사진</label>
+  <input type="file" accept="image/*" onchange="previewImage(event, 'afterImage')" />
+  <div class="image-preview">
+    <img id="afterImage" src="" alt="작업 후 이미지" />
+  </div>
 
-    <button type="button" onclick="saveReport()">보고서 저장</button>
-    <a href="board.html" style="text-align:center; display:block; margin-bottom:20px;">📋 게시판 보기</a>
-  </form>
+  <label>입주자 서명</label>
+  <canvas id="signature" width="600" height="200"></canvas>
+  <div class="button-group">
+    <button type="button" onclick="clearSignature()">서명 리셋</button>
+  </div>
 
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <div class="button-group">
+    <button type="button" onclick="saveReport()">저장하기</button>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
