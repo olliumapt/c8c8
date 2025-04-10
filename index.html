@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>세대 민원처리 보고서</title>
   <style>
     body {
@@ -14,7 +13,6 @@
       justify-content: center;
       background: #f9f9f9;
     }
-
     .report-form {
       width: 794px;
       min-height: 1123px;
@@ -26,118 +24,65 @@
       gap: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .column {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
     label {
       font-weight: bold;
       margin-bottom: 5px;
     }
-
-    input,
-    textarea,
-    select {
+    input, textarea, select {
       width: 100%;
       padding: 8px;
       box-sizing: border-box;
     }
-
     .images {
       display: flex;
-      justify-content: space-between;
       gap: 10px;
     }
-
-    .images input[type="file"] {
-      width: 48%;
+    .images .column {
+      flex: 1;
     }
-
     .thumbnail {
       max-width: 100%;
       height: auto;
       margin-top: 5px;
     }
-
     .signature-pad {
       border: 1px solid #ccc;
       height: 150px;
       width: 100%;
     }
-
     .signature-actions {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 10px;
       margin-top: 10px;
-    }
-
-    @media (max-width: 800px) {
-      body {
-        padding: 10px;
-      }
-
-      .report-form {
-        width: 100%;
-        min-height: auto;
-      }
-
-      .row {
-        flex-direction: column;
-      }
-
-      .images {
-        flex-direction: column;
-      }
-
-      .images input[type="file"] {
-        width: 100%;
-      }
     }
   </style>
 </head>
 
 <body>
   <form class="report-form" id="reportForm">
-    <h2 style="text-align:center">세대 민원처리 보고서</h2>
+    <h2 style="text-align: center;">세대 민원처리 보고서</h2>
 
-    <body>
-  <div class="report">
-    <!-- 날짜 입력 -->
     <label>작업 날짜:</label>
-    <input type="date" id="workDate" /><br/>
+    <input type="date" id="workDate" />
 
-    <!-- 세대 주소 -->
     <label>세대 주소:</label>
-    <input type="text" id="address" /><br/>
+    <input type="text" id="address" />
 
-    <!-- 민원 내용 -->
     <label>민원 내용:</label>
-    <textarea id="complaint"></textarea><br/>
+    <textarea id="complaint"></textarea>
 
-    <!-- 처리 결과 -->
     <label>처리 결과:</label>
-    <textarea id="result"></textarea><br/>
+    <textarea id="result"></textarea>
 
-    <!-- 담당자 선택 -->
     <label>담당자:</label>
     <select id="worker">
       <option value="">선택</option>
       <option value="김원식">김원식</option>
       <option value="최재혁">최재혁</option>
       <option value="박상우">박상우</option>
-    </select><br/>
+    </select>
 
-    <!-- 만족도 -->
     <label>만족도:</label>
     <select id="satisfaction">
       <option value="">선택</option>
@@ -146,29 +91,31 @@
       <option value="3">⭐⭐⭐</option>
       <option value="4">⭐⭐⭐⭐</option>
       <option value="5">⭐⭐⭐⭐⭐</option>
-    </select><br/>
+    </select>
 
-    <!-- 작업 전/후 이미지 -->
-    <label>작업 전 이미지:</label>
-    <img id="beforeImage" src="" width="150" /><br/>
+    <div class="images">
+      <div class="column">
+        <label>작업 전 이미지:</label>
+        <input type="file" accept="image/*" onchange="previewImage(event, 'beforeImage')" />
+        <img id="beforeImage" class="thumbnail" src="" />
+      </div>
+      <div class="column">
+        <label>작업 후 이미지:</label>
+        <input type="file" accept="image/*" onchange="previewImage(event, 'afterImage')" />
+        <img id="afterImage" class="thumbnail" src="" />
+      </div>
+    </div>
 
-    <label>작업 후 이미지:</label>
-    <img id="afterImage" src="" width="150" /><br/>
-
-    <!-- 서명 이미지 -->
     <label>입주자 서명:</label>
-    <img id="signatureImage" src="" width="150" /><br/>
+    <canvas id="signature" class="signature-pad"></canvas>
+    <div class="signature-actions">
+      <button type="button" onclick="clearSignature()">서명 리셋</button>
+    </div>
 
-    <!-- ✅ 저장 버튼 -->
-    <button onclick="saveComplaint()">저장</button>
-  </div>
-
-  <!-- JavaScript 연결 -->
-  <script src="main.js"></script>
-</body>
-     
+    <button type="button" onclick="saveReport()">이미지 저장</button>
   </form>
 
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
     function previewImage(event, id) {
       const reader = new FileReader();
@@ -181,25 +128,6 @@
     const canvas = document.getElementById('signature');
     const ctx = canvas.getContext('2d');
     let drawing = false;
-
-    canvas.addEventListener('touchstart', e => {
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      ctx.beginPath();
-      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-      drawing = true;
-    });
-
-    canvas.addEventListener('touchmove', e => {
-      if (!drawing) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-      ctx.stroke();
-    });
-
-    canvas.addEventListener('touchend', () => drawing = false);
 
     canvas.addEventListener('mousedown', e => {
       ctx.beginPath();
@@ -214,6 +142,23 @@
     canvas.addEventListener('mouseup', () => drawing = false);
     canvas.addEventListener('mouseout', () => drawing = false);
 
+    canvas.addEventListener('touchstart', e => {
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      ctx.beginPath();
+      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      drawing = true;
+    }, { passive: false });
+    canvas.addEventListener('touchmove', e => {
+      if (!drawing) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      ctx.stroke();
+    }, { passive: false });
+    canvas.addEventListener('touchend', () => drawing = false);
+
     function clearSignature() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -224,11 +169,8 @@
         link.download = '세대_민원처리_보고서.png';
         link.href = canvas.toDataURL();
         link.click();
-        // 이후 저장 데이터를 서버로 전송하는 작업 추가 가능
       });
     }
   </script>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </body>
-
 </html>
