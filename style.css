@@ -1,112 +1,147 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("reportForm");
-  const signaturePad = new SignaturePad(document.getElementById("signature-pad"));
+/* style.css */
 
-  function updateImagePreview(inputElement, previewContainerId) {
-    const previewContainer = document.getElementById(previewContainerId);
-    previewContainer.innerHTML = "";
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
 
-    Array.from(inputElement.files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        img.classList.add("thumbnail");
-        previewContainer.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
+h2 {
+  text-align: center;
+  margin-top: 1rem;
+  color: #222;
+}
+
+form {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+label,
+fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+button[type="submit"],
+button[type="button"] {
+  padding: 0.8rem;
+  font-size: 1rem;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.image-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+
+.image-preview img {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  object-fit: cover;
+}
+
+canvas#signature-pad {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  width: 100%;
+  max-width: 350px;
+  height: 120px;
+}
+
+@media (max-width: 768px) {
+  form {
+    padding: 1rem;
   }
 
-  ["beforeImages", "afterImages"].forEach((id) => {
-    const input = document.getElementById(id);
-    input.setAttribute("multiple", "multiple");
-    input.setAttribute("accept", "image/*");
-    input.addEventListener("change", function () {
-      updateImagePreview(this, `${id}Preview`);
-    });
-  });
+  .image-upload-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-  document.getElementById("clear-signature").addEventListener("click", function () {
-    signaturePad.clear();
-  });
+  canvas#signature-pad {
+    width: 100%;
+  }
+}
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+#reportSection {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 
-    const reportContainer = document.createElement("div");
-    reportContainer.className = "report";
+#savedReports > div {
+  border-bottom: 1px solid #ccc;
+  padding: 1rem 0;
+}
 
-    const formData = new FormData(form);
-    const date = formData.get("date");
-    const address = formData.get("address");
-    const issue = formData.get("issue");
-    const result = formData.get("result");
-    const manager = formData.get("manager");
-    const satisfaction = formData.get("satisfaction");
+#savedReports img {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+  margin-right: 0.5rem;
+}
 
-    const signatureImage = signaturePad.toDataURL();
+/* 모바일에서 버튼 간격 및 입력 필드 정렬 개선 */
+@media (max-width: 480px) {
+  button[type="submit"],
+  button[type="button"] {
+    width: 100%;
+  }
 
-    const createInfoRow = (label, value) => {
-      const row = document.createElement("p");
-      row.innerHTML = `<strong>${label}:</strong> ${value}`;
-      return row;
-    };
-
-    reportContainer.appendChild(createInfoRow("작업일자", date));
-    reportContainer.appendChild(createInfoRow("세대주소", address));
-    reportContainer.appendChild(createInfoRow("민원내용", issue));
-    reportContainer.appendChild(createInfoRow("처리결과", result));
-    reportContainer.appendChild(createInfoRow("담당자", manager));
-    reportContainer.appendChild(createInfoRow("만족도", "★".repeat(parseInt(satisfaction))));
-
-    const addImageSection = (label, files) => {
-      const sectionTitle = document.createElement("h4");
-      sectionTitle.textContent = label;
-      reportContainer.appendChild(sectionTitle);
-      const imgContainer = document.createElement("div");
-      imgContainer.className = "image-section";
-
-      Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.classList.add("thumbnail");
-          imgContainer.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-      });
-
-      reportContainer.appendChild(imgContainer);
-    };
-
-    addImageSection("작업 전 사진", document.getElementById("beforeImages").files);
-    addImageSection("작업 후 사진", document.getElementById("afterImages").files);
-
-    const signatureTitle = document.createElement("h4");
-    signatureTitle.textContent = "입주자 서명";
-    reportContainer.appendChild(signatureTitle);
-
-    const signatureImg = document.createElement("img");
-    signatureImg.src = signatureImage;
-    signatureImg.classList.add("signature-image");
-    reportContainer.appendChild(signatureImg);
-
-    const savedReports = document.getElementById("savedReports");
-    savedReports.appendChild(reportContainer);
-
-    form.reset();
-    signaturePad.clear();
-    document.getElementById("beforePreview").innerHTML = "";
-    document.getElementById("afterPreview").innerHTML = "";
-
-    const formSection = document.getElementById("formSection");
-    const reportSection = document.getElementById("reportSection");
-    formSection.style.display = "none";
-    reportSection.style.display = "block";
-
-    // 스크롤 최상단으로 이동
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-});
+  label,
+  input,
+  textarea,
+  select {
+    font-size: 0.95rem;
+  }
+}
