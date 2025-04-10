@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>민원 목록</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border: 1px solid #ccc; }
+    th { background: #f0f0f0; }
+    a { text-decoration: none; color: blue; }
+  </style>
+</head>
+<body>
+  <h2>민원 목록</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th>
+        <th>세대 주소</th>
+        <th>작업자</th>
+        <th>상세 보기</th>
+      </tr>
+    </thead>
+    <tbody id="reportList"></tbody>
+  </table>
+
+  <script>
+    const reports = JSON.parse(localStorage.getItem('reports') || '[]');
+    const list = document.getElementById('reportList');
+
+    reports.forEach(report => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${report.date}</td>
+        <td>${report.address}</td>
+        <td>${report.worker}</td>
+        <td><a href="report.html?id=${report.id}">보기</a></td>
+      `;
+      list.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
