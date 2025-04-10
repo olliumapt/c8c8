@@ -124,12 +124,19 @@
 </div>
 
 
-  <label>입주자 서명</label>
-  <canvas id="signature-pad"></canvas>
+ <!-- 파일 업로드 및 썸네일 -->
+<input type="file" id="beforeUpload" accept="image/*" />
+<img id="beforePreview" src="" width="100" />
 
-  <div class="button-group">
-    <button type="button" onclick="saveReport()">저장</button>
-    <button type="button" id="reset-signature" class="btn-secondary">서명 리셋</button>
+<input type="file" id="afterUpload" accept="image/*" />
+<img id="afterPreview" src="" width="100" />
+
+<!-- 서명 -->
+<canvas id="signaturePad" width="300" height="150" style="border:1px solid #ccc;"></canvas>
+<button id="captureSignatureBtn">서명 저장</button>
+<button id="resetSignatureBtn">서명 리셋</button>
+<img id="signatureImage" src="" width="200" />
+
     <button type="button" onclick="window.location.href='board.html'" class="btn-secondary">게시판 바로가기</button>
   </div>
 
