@@ -1,123 +1,56 @@
-let isDrawing = false;
-let lastX = 0;
-let lastY = 0;
+// Firebase 연결
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-const canvas = document.getElementById("signature-pad");
-const ctx = canvas.getContext("2d");
+const firebaseConfig = {
+  apiKey: "AIzaSyCufJnLmO2biBaDoSvtCAu8WGzRX-cEPgE",
+  authDomain: "ollium-a6e5d.firebaseapp.com",
+  projectId: "ollium-a6e5d",
+  storageBucket: "ollium-a6e5d.appspot.com",
+  messagingSenderId: "706733940523",
+  appId: "1:706733940523:web:568a71971524e8c3cfaf6e"
+};
 
-// 캔버스 해상도 설정
-function resizeCanvas() {
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = canvas.offsetWidth * ratio;
-  canvas.height = canvas.offsetHeight * ratio;
-  ctx.scale(ratio, ratio);
-  ctx.lineWidth = 2;
-  ctx.lineJoin = "round";
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "#000";
-}
-resizeCanvas();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// 터치 및 마우스 이벤트 공통 처리
-function getEventPosition(e) {
-  if (e.touches && e.touches.length > 0) {
-    return {
-      x: e.touches[0].clientX - canvas.getBoundingClientRect().left,
-      y: e.touches[0].clientY - canvas.getBoundingClientRect().top,
-    };
-  } else {
-    return {
-      x: e.clientX - canvas.getBoundingClientRect().left,
-      y: e.clientY - canvas.getBoundingClientRect().top,
-    };
-  }
-}
+// 저장 버튼 이벤트
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const date = document.getElementById("date").value;
+  const address = document.getElementById("address").value;
+  const content = document.getElementById("content").value;
+  const result = document.getElementById("result").value;
+  const worker = document.getElementById("worker").value;
+  const satisfaction = document.getElementById("satisfaction").value;
 
-function startDrawing(e) {
-  isDrawing = true;
-  const pos = getEventPosition(e);
-  lastX = pos.x;
-  lastY = pos.y;
-}
+  // 서명 이미지 데이터
+  const signaturePad = document.getElementById("signature");
+  const signatureData = signaturePad.toDataURL();
 
-function draw(e) {
-  if (!isDrawing) return;
-  e.preventDefault(); // 모바일에서 스크롤 방지
-  const pos = getEventPosition(e);
-  ctx.beginPath();
-  ctx.moveTo(lastX, lastY);
-  ctx.lineTo(pos.x, pos.y);
-  ctx.stroke();
-  lastX = pos.x;
-  lastY = pos.y;
-}
+  // 이미지 파일은 이름만 저장 (업로드는 추후 작업)
+  const beforeFile = document.getElementById("beforeUpload").files[0];
+  const afterFile = document.getElementById("afterUpload").files[0];
+  const beforeFileName = beforeFile ? beforeFile.name : "";
+  const afterFileName = afterFile ? afterFile.name : "";
 
-function stopDrawing() {
-  isDrawing = false;
-}
+  try {
+    await addDoc(collection(db, "reports"), {
+      date,
+      address,
+      content,
+      result,
+      worker,
+      satisfaction,
+      signature: signatureData,
+      beforeImage: beforeFileName,
+      afterImage: afterFileName,
+      timestamp: new Date()
+    });
 
-canvas.addEventListener("mousedown", startDrawing);
-canvas.addEventListener("mousemove", draw);
-canvas.addEventListener("mouseup", stopDrawing);
-canvas.addEventListener("mouseout", stopDrawing);
-
-canvas.addEventListener("touchstart", startDrawing, { passive: false });
-canvas.addEventListener("touchmove", draw, { passive: false });
-canvas.addEventListener("touchend", stopDrawing);
-
-// 서명 리셋
-document.getElementById("reset-signature").addEventListener("click", () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-});
-
-// 이미지 업로드 및 썸네일
-document.getElementById("beforeUpload").addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById("beforeImage").src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    alert("보고서가 저장되었습니다.");
+    window.location.href = "board.html"; // 게시판 페이지로 이동
+  } catch (e) {
+    console.error("저장 중 오류 발생: ", e);
+    alert("저장에 실패했습니다.");
   }
 });
-
-document.getElementById("afterUpload").addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      document.getElementById("afterImage").src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// 보고서 저장 및 게시판 이동
-function saveReport() {
-  const data = {
-    workDate: document.getElementById("workDate").value,
-    address: document.getElementById("address").value,
-    complaint: document.getElementById("complaint").value,
-    result: document.getElementById("result").value,
-    worker: document.getElementById("worker").value,
-    satisfaction: document.getElementById("satisfaction").value,
-    beforeImage: document.getElementById("beforeImage").src,
-    afterImage: document.getElementById("afterImage").src,
-    signature: canvas.toDataURL()
-  };
-
-  // 필수 항목 체크
-  for (let key in data) {
-    if (!data[key]) {
-      alert("모든 항목을 입력해 주세요.");
-      return;
-    }
-  }
-
-  // 저장 및 페이지 이동
-  const existing = JSON.parse(localStorage.getItem("reports") || "[]");
-  existing.push(data);
-  localStorage.setItem("reports", JSON.stringify(existing));
-  window.location.href = "board.html";
-}
