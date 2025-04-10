@@ -23,10 +23,19 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
 
   const beforeFile = document.getElementById("beforeUpload").files[0];
   const afterFile = document.getElementById("afterUpload").files[0];
+  const extra1File = document.getElementById("extra1Upload").files[0];
+  const extra2File = document.getElementById("extra2Upload").files[0];
+  const extra3File = document.getElementById("extra3Upload").files[0];
+  const extra4File = document.getElementById("extra4Upload").files[0];
+
   const signatureDataUrl = document.getElementById("signatureImage").src;
 
   const beforeImage = await toDataUrl(beforeFile);
   const afterImage = await toDataUrl(afterFile);
+  const extra1Image = await toDataUrl(extra1File);
+  const extra2Image = await toDataUrl(extra2File);
+  const extra3Image = await toDataUrl(extra3File);
+  const extra4Image = await toDataUrl(extra4File);
 
   const data = {
     workDate,
@@ -37,6 +46,10 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     satisfaction,
     beforeImage,
     afterImage,
+    extra1Image,
+    extra2Image,
+    extra3Image,
+    extra4Image,
     signature: signatureDataUrl
   };
 
@@ -60,6 +73,7 @@ function toDataUrl(file) {
   });
 }
 
+// 서명 리셋 및 저장
 document.getElementById("resetSignatureBtn").addEventListener("click", () => {
   const canvas = document.getElementById("signaturePad");
   const ctx = canvas.getContext("2d");
@@ -73,24 +87,24 @@ document.getElementById("captureSignatureBtn").addEventListener("click", () => {
   document.getElementById("signatureImage").src = dataUrl;
 });
 
-document.getElementById("beforeUpload").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      document.getElementById("beforePreview").src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
+// 이미지 미리보기 등록 함수
+function handleImagePreview(inputId, previewId) {
+  document.getElementById(inputId).addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        document.getElementById(previewId).src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+}
 
-document.getElementById("afterUpload").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-      document.getElementById("afterPreview").src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
+// 각 이미지 필드 연결
+handleImagePreview("beforeUpload", "beforePreview");
+handleImagePreview("afterUpload", "afterPreview");
+handleImagePreview("extra1Upload", "extra1Preview");
+handleImagePreview("extra2Upload", "extra2Preview");
+handleImagePreview("extra3Upload", "extra3Preview");
+handleImagePreview("extra4Upload", "extra4Preview");
