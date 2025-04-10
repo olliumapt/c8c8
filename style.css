@@ -1,0 +1,52 @@
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  background: #f9f9f9;
+}
+.report-form {
+  width: 794px;
+  min-height: 1123px;
+  background: white;
+  padding: 30px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.images {
+  display: flex;
+  gap: 10px;
+}
+.images .column {
+  flex: 1;
+}
+.thumbnail {
+  max-width: 100%;
+  height: auto;
+  margin-top: 5px;
+}
+.signature-pad {
+  border: 1px solid #ccc;
+  height: 150px;
+  width: 100%;
+}
+.signature-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}

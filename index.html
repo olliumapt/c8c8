@@ -1,64 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>세대 민원처리 보고서</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      background: #f9f9f9;
-    }
-    .report-form {
-      width: 794px;
-      min-height: 1123px;
-      background: white;
-      padding: 30px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    label {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    input, textarea, select {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-    }
-    .images {
-      display: flex;
-      gap: 10px;
-    }
-    .images .column {
-      flex: 1;
-    }
-    .thumbnail {
-      max-width: 100%;
-      height: auto;
-      margin-top: 5px;
-    }
-    .signature-pad {
-      border: 1px solid #ccc;
-      height: 150px;
-      width: 100%;
-    }
-    .signature-actions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <form class="report-form" id="reportForm">
     <h2 style="text-align: center;">세대 민원처리 보고서</h2>
@@ -112,65 +60,10 @@
       <button type="button" onclick="clearSignature()">서명 리셋</button>
     </div>
 
-    <button type="button" onclick="saveReport()">이미지 저장</button>
+    <button type="button" onclick="saveReport()">보고서 저장</button>
   </form>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script>
-    function previewImage(event, id) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        document.getElementById(id).src = reader.result;
-      }
-      reader.readAsDataURL(event.target.files[0]);
-    }
-
-    const canvas = document.getElementById('signature');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
-
-    canvas.addEventListener('mousedown', e => {
-      ctx.beginPath();
-      ctx.moveTo(e.offsetX, e.offsetY);
-      drawing = true;
-    });
-    canvas.addEventListener('mousemove', e => {
-      if (!drawing) return;
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.stroke();
-    });
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mouseout', () => drawing = false);
-
-    canvas.addEventListener('touchstart', e => {
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      ctx.beginPath();
-      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-      drawing = true;
-    }, { passive: false });
-    canvas.addEventListener('touchmove', e => {
-      if (!drawing) return;
-      e.preventDefault();
-      const touch = e.touches[0];
-      const rect = canvas.getBoundingClientRect();
-      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-      ctx.stroke();
-    }, { passive: false });
-    canvas.addEventListener('touchend', () => drawing = false);
-
-    function clearSignature() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function saveReport() {
-      html2canvas(document.querySelector(".report-form")).then(canvas => {
-        const link = document.createElement('a');
-        link.download = '세대_민원처리_보고서.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
