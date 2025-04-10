@@ -110,70 +110,63 @@
   <form class="report-form" id="reportForm">
     <h2 style="text-align:center">세대 민원처리 보고서</h2>
 
-    <div class="row">
-      <div class="column">
-        <label>작업 날짜</label>
-        <input type="date" name="date">
-      </div>
-      <div class="column">
-        <label>세대 주소</label>
-        <input type="text" name="address">
-      </div>
-    </div>
+    <body>
+  <div class="report">
+    <!-- 날짜 입력 -->
+    <label>작업 날짜:</label>
+    <input type="date" id="workDate" /><br/>
 
-    <div class="row">
-      <div class="column">
-        <label>민원 내용</label>
-        <textarea rows="4" name="complaint"></textarea>
-      </div>
-      <div class="column">
-        <label>처리 결과</label>
-        <textarea rows="4" name="result"></textarea>
-      </div>
-    </div>
+    <!-- 세대 주소 -->
+    <label>세대 주소:</label>
+    <input type="text" id="address" /><br/>
 
-    <div class="images">
-      <div>
-        <label>작업 전</label>
-        <input type="file" accept="image/*" onchange="previewImage(event, 'beforePreview')">
-        <img id="beforePreview" class="thumbnail" />
-      </div>
-      <div>
-        <label>작업 후</label>
-        <input type="file" accept="image/*" onchange="previewImage(event, 'afterPreview')">
-        <img id="afterPreview" class="thumbnail" />
-      </div>
-    </div>
+    <!-- 민원 내용 -->
+    <label>민원 내용:</label>
+    <textarea id="complaint"></textarea><br/>
 
-    <div class="row">
-      <div class="column">
-        <label>만족도 평가</label>
-        <select name="rating">
-          <option>⭐</option>
-          <option>⭐⭐</option>
-          <option>⭐⭐⭐</option>
-          <option>⭐⭐⭐⭐</option>
-          <option>⭐⭐⭐⭐⭐</option>
-        </select>
-      </div>
-      <div class="column">
-        <label>작업자</label>
-        <select name="worker">
-          <option>김원식</option>
-          <option>최재혁</option>
-          <option>박상우</option>
-        </select>
-      </div>
-    </div>
+    <!-- 처리 결과 -->
+    <label>처리 결과:</label>
+    <textarea id="result"></textarea><br/>
 
-    <div>
-      <label>입주자 서명</label>
-      <canvas id="signature" class="signature-pad"></canvas>
-      <div class="signature-actions">
-        <button type="button" onclick="clearSignature()">리셋</button>
-        <button type="button" onclick="saveReport()">저장</button>
-      </div>
-    </div>
+    <!-- 담당자 선택 -->
+    <label>담당자:</label>
+    <select id="worker">
+      <option value="">선택</option>
+      <option value="김원식">김원식</option>
+      <option value="최재혁">최재혁</option>
+      <option value="박상우">박상우</option>
+    </select><br/>
+
+    <!-- 만족도 -->
+    <label>만족도:</label>
+    <select id="satisfaction">
+      <option value="">선택</option>
+      <option value="1">⭐</option>
+      <option value="2">⭐⭐</option>
+      <option value="3">⭐⭐⭐</option>
+      <option value="4">⭐⭐⭐⭐</option>
+      <option value="5">⭐⭐⭐⭐⭐</option>
+    </select><br/>
+
+    <!-- 작업 전/후 이미지 -->
+    <label>작업 전 이미지:</label>
+    <img id="beforeImage" src="" width="150" /><br/>
+
+    <label>작업 후 이미지:</label>
+    <img id="afterImage" src="" width="150" /><br/>
+
+    <!-- 서명 이미지 -->
+    <label>입주자 서명:</label>
+    <img id="signatureImage" src="" width="150" /><br/>
+
+    <!-- ✅ 저장 버튼 -->
+    <button onclick="saveComplaint()">저장</button>
+  </div>
+
+  <!-- JavaScript 연결 -->
+  <script src="main.js"></script>
+</body>
+     
   </form>
 
   <script>
